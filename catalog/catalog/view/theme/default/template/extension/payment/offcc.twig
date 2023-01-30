@@ -1,0 +1,114 @@
+<h2>{{ text_heading }}</h2>
+<div class="clearfix">{{ description }}</div>
+<div class="row">
+	<form class="form-horizental" id="offcc-form">
+		<div class="form-group required clearfix">
+			<label class="col-sm-2 control-label" for="input-card_owner">{{ text_card_owner }}</label>
+			<div class="col-sm-10">
+			<input type="text" name="card_owner" value="" placeholder="{{ text_card_owner }}" id="input-card_owner" class="form-control">
+			<div class="text-danger">{{ error_card_owner }}</div>
+			</div>
+		</div>
+
+		<div class="form-group required clearfix">
+			<label class="col-sm-2 control-label" for="input-card_type">{{ text_card_type }}</label>
+			<div class="col-sm-10">
+			<select name="card_type" class="form-control" id="input-card_type">
+				{% for key,card_type in card_types %}
+					<option value="{{ key }}">{{ card_type }}</option>
+				{% endfor %}
+			</select>
+			<div class="text-danger">{{ error_card_type }}</div>
+			</div>
+		</div>
+
+		<div class="form-group required clearfix">
+			<label class="col-sm-2 control-label" for="input-card_number">{{ text_card_number }}</label>
+			<div class="col-sm-10">
+			<input type="text" name="card_number" value="" placeholder="{{ text_card_number }}" id="input-card_number" class="form-control">
+			<div class="text-danger">{{ error_card_number }}</div>
+		</div>
+		</div>
+
+		<div class="form-group required clearfix">
+				<label class="col-sm-2 control-label" for="input-card_type">{{ text_expiry_date }}</label>
+				<div class="col-sm-10">
+					<div class="row">
+						<div class="col-sm-6 col-xs-6">
+							<select name="month" class="form-control">
+									{% for i in 1..12 %}
+									{% if i < 10 %}
+									<option value="{{ i }}">0{{ i }}</option>
+									{% else %}
+									<option value="{{ i }}">{{ i }}</option>
+									{% endif %}
+									{% endfor %}
+							</select>
+						</div>
+		
+						<div class="col-sm-6 col-xs-6">
+							<select name="year" class="form-control">
+									{% for year in years %}
+									<option value="{{ year }}">{{ year }}</option>
+									{% endfor %}
+							</select>
+						</div>
+						<div class="col-sm-12"><div id="input-expiry_date"><div class="text-danger">{{ error_expiry_date }}</div></div></div>
+						
+					</div>
+					
+				</div>
+				
+			</div>
+
+		<div class="form-group required clearfix">
+			<label class="col-sm-2 control-label" for="input-cvc">{{ text_cvc }}</label>
+			<div class="col-sm-10">
+			<input type="text" name="cvc" value="" placeholder="{{ text_cvc }}" id="input-cvc" class="form-control">
+			<div class="text-danger">{{ error_cvc }}</div>
+			</div>
+		</div>
+
+	</form>
+</div>
+<div class="buttons">
+  <div class="pull-right">
+    <input type="button" value="{{ button_confirm }}" id="button-confirm" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('#button-confirm').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/payment/offcc/confirm',
+		data : $('#offcc-form').serialize(),
+		type : 'POST',
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-confirm').button('loading');
+			$('#offcc-form .text-danger').remove();
+			$('#offcc-form div').removeClass('has-error');
+		},
+		complete: function() {
+			$('#button-confirm').button('reset');
+		},
+		success: function(json) {
+			
+			if(json['error']) {
+				$.each(json['error'], function( index, value ) {
+					$("#input-"+index).closest('.form-group').addClass('has-error');
+					$("#input-"+index).after('<div class="text-danger">'+value+'</div>')
+				});
+
+			}
+			if (json['redirect']) {
+				location = json['redirect'];	
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+});
+//--></script>

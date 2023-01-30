@@ -1,0 +1,85 @@
+
+------------------------------ Starting Test 2022-12-01 8:05:01 ------------------------------
+CUSTOMER: victor kong (customer_id: 20, ip: 38.94.108.194)
+SHIPPING ADDRESS: hongkong, hongkong, hongkong, 510000, Singapore
+EVALUATING RULES:
+ENABLED "Shipping for Bags only" with cost 84
+"Jewelry Shipping only" disabled for having no eligible products
+"Jewelry Shipping" disabled for having no eligible products
+ENABLED "Bag Shipping" with cost 84
+"Exact 2 bags" disabled for violating rule "geo_zone is 8" with value "10"
+"Exact 5 Jewelry" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 1" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 2" disabled for violating rule "geo_zone is 9" with value "10"
+ENABLED "Weight for zone 3" with cost 93
+"Weight for zone 4" disabled for violating rule "geo_zone is 11" with value "10"
+"Weight for zone 5" disabled for violating rule "geo_zone is 12" with value "10"
+"Weight for zone 6" disabled for violating rule "geo_zone is 13" with value "10"
+
+------------------------------ Starting Test 2023-01-15 10:57:28 ------------------------------
+CUSTOMER: Guest (103.153.174.43)
+SHIPPING ADDRESS: 3434, 3434, jessore, Khulna, 7460, Bangladesh
+EVALUATING RULES:
+"Shipping for Bags only" disabled for having no eligible products
+"Jewelry Shipping only" disabled for having no eligible products
+"Jewelry Shipping" disabled for having no eligible products
+"Bag Shipping" disabled for having no eligible products
+"Exact 2 bags" disabled for violating rule "geo_zone is 8" with value "10"
+"Exact 5 Jewelry" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 1" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 2" disabled for violating rule "geo_zone is 9" with value "10"
+ENABLED "Weight for zone 3" with cost 93
+"Weight for zone 4" disabled for violating rule "geo_zone is 11" with value "10"
+"Weight for zone 5" disabled for violating rule "geo_zone is 12" with value "10"
+"Weight for zone 6" disabled for violating rule "geo_zone is 13" with value "10"
+
+------------------------------ Starting Test 2023-01-15 11:11:28 ------------------------------
+CUSTOMER: Guest (103.153.174.43)
+SHIPPING ADDRESS: 3434, 3434, jessore, Khulna, 7460, Bangladesh
+EVALUATING RULES:
+"Shipping for Bags only" disabled for having no eligible products
+"Jewelry Shipping only" disabled for having no eligible products
+"Jewelry Shipping" disabled for having no eligible products
+"Bag Shipping" disabled for having no eligible products
+"Exact 2 bags" disabled for violating rule "geo_zone is 8" with value "10"
+"Exact 5 Jewelry" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 1" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 2" disabled for violating rule "geo_zone is 9" with value "10"
+ENABLED "Weight for zone 3" with cost 93
+"Weight for zone 4" disabled for violating rule "geo_zone is 11" with value "10"
+"Weight for zone 5" disabled for violating rule "geo_zone is 12" with value "10"
+"Weight for zone 6" disabled for violating rule "geo_zone is 13" with value "10"
+
+------------------------------ Starting Test 2023-01-15 11:12:14 ------------------------------
+CUSTOMER: Guest (103.153.174.43)
+SHIPPING ADDRESS: 3434, 3434, jessore, Khulna, 7460, Bangladesh
+EVALUATING RULES:
+"Shipping for Bags only" disabled for having no eligible products
+"Jewelry Shipping only" disabled for having no eligible products
+"Jewelry Shipping" disabled for having no eligible products
+"Bag Shipping" disabled for having no eligible products
+"Exact 2 bags" disabled for violating rule "geo_zone is 8" with value "10"
+"Exact 5 Jewelry" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 1" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 2" disabled for violating rule "geo_zone is 9" with value "10"
+ENABLED "Weight for zone 3" with cost 93
+"Weight for zone 4" disabled for violating rule "geo_zone is 11" with value "10"
+"Weight for zone 5" disabled for violating rule "geo_zone is 12" with value "10"
+"Weight for zone 6" disabled for violating rule "geo_zone is 13" with value "10"
+
+------------------------------ Starting Test 2023-01-15 11:37:52 ------------------------------
+CUSTOMER: Guest (103.153.174.43)
+SHIPPING ADDRESS: Tetul tola road, ward no: 4, Holding: 937, Noapara, Abhaynagar, Jessore, Noapara, Chittagong, 7460, Bangladesh
+EVALUATING RULES:
+"Shipping for Bags only" disabled for having no eligible products
+"Jewelry Shipping only" disabled for having no eligible products
+"Jewelry Shipping" disabled for having no eligible products
+"Bag Shipping" disabled for having no eligible products
+"Exact 2 bags" disabled for violating rule "geo_zone is 8" with value "10"
+"Exact 5 Jewelry" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 1" disabled for violating rule "geo_zone is 8" with value "10"
+"Weight for zone 2" disabled for violating rule "geo_zone is 9" with value "10"
+ENABLED "Weight for zone 3" with cost 93
+"Weight for zone 4" disabled for violating rule "geo_zone is 11" with value "10"
+"Weight for zone 5" disabled for violating rule "geo_zone is 12" with value "10"
+"Weight for zone 6" disabled for violating rule "geo_zone is 13" with value "10"

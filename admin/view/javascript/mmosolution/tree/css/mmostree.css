@@ -1,0 +1,80 @@
+
+/** Easy Tree style */
+
+
+/*edit name*/
+.cellEditing .well .btn {
+    margin-right: 5px
+}
+/*edit category*/
+
+.easy-tree .parent > li:first-child {
+    padding-top: 0;
+}
+
+.easy-tree ul.dropdown-menu {
+    margin: 0;
+    padding: 0;
+}
+.easy-tree ul.dropdown-menu .divider-destroy {
+    margin: 0;
+    padding: 10px 15px;
+    text-align: right;
+}
+.easy-tree ul.dropdown-menu .divider-destroy i{
+   font-size: 17px;
+   color: #ccc;
+}
+.easy-tree   ul.dropdown-menu li  a, .easy-tree li.li_selected  ul.dropdown-menu li  a {
+    color: #666;
+}
+.easy-tree ul.dropdown-menu li:before, .easy-tree ul.dropdown-menu li:after{
+    border-left: 0;
+    bottom: 0;
+    height: 0;
+    width: 0;
+    border-top: 0;
+
+}
+.parent_li ul {
+    padding-left: 25px;
+}
+.easy-tree li.li_selected > span:hover{
+    background: #1E91CF !important;
+}
+.easy-tree li.li_selected > span a{
+    color: #ffffff;
+}
+
+.filter-product {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.col-sm-2 .form-group:last-child {
+    margin-bottom: 0px;
+}
+.margin-0 {
+    margin-bottom: 10px;
+}
+
+.product-heading h4, .product-heading  button {
+    display: inline-block;
+}
+@media (min-width : 960px) {  
+    .filter-product .col-sm-2{ width: 20%}
+}
+@media (min-width : 550px) {  
+    .catalog-left {padding-right: 0;}
+}
+.table-wrapper1, .table-wrapper2 { width: 100%; overflow-x: scroll; overflow-y: hidden;margin: 0;padding:0 }
+.table-wrapper1 { height: 20px; margin: 0;padding:0}
+.table-width1 { height: 20px;margin: 0;padding:0 }
+.table-width2, .table-width2 table {margin: 0;padding:0 }
+.cellEditing { min-width: 220px}
+.column_name.cellEditing, .column_seo_keyword.cellEditing  { min-width: 320px}
+.column_action{ min-width: 100px}
+#pagination {
+    margin-top: 10px
+}

@@ -1,0 +1,74 @@
+<div class="heading-wrapper">
+     <h3 class="mainhead">{{ heading_title }}</h3>
+     <div class="pull-right viewall">
+        <a href="index.php?route=extension/gallery">{{ text_viewall }}</a>
+    </div>
+</div>
+<div class="row">
+	<div class="product-layout">
+		<div class="gallery_row">
+		{% if carousel==1 %}
+          <div class="galle owl-carousel">
+			{% if gallerys %}
+              {% for gallery in gallerys %}
+				<div class=" col-sm-12 col-md-12 col-lg-12 col-xs-12">
+				 <div class="gallary ">
+					<div class="images">
+				    	<a href="{{ gallery.href }}">
+				        {% if gallery.image %}
+				<img class="img-responsive" src="{{ gallery.image }}"/>
+					 	{% endif %}
+							</a>
+					
+						<div class="texthover" onclick="top.location.href='{{ gallery.href }}'">	
+								<a class="name" href="{{ gallery.href }}"><span>{{ gallery.album }}</span></a>
+								<span class="description"><p>{{ gallery.description }}</p></span>
+								<p class="totalphoto">{{ gallery.totalphoto }}  {{ text_photos }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			  {% endfor %}
+			 {% endif %}
+			</div>
+		{% else %}		
+		
+		<div class="galle homegallery">
+          {% if gallerys %}
+			{% for gallery in gallerys %}
+				<div class=" col-sm-3 col-md-3 col-lg-3 col-xs-12">
+					<div class="gallary ">
+						<div class="images">
+				   <a href="{{ gallery.href }}">
+				  {% if gallery.image %}
+								<img class="img-responsive" src="{{ gallery.image }}"/>
+					 			{% endif %}
+							</a>
+					
+						<div class="texthover" onclick="top.location.href='{{ gallery.href }}'">	
+								<a class="name" href="{{ gallery.href }}"><span>{{ gallery.album }}</span></a>
+								<span class="description"><p>{{ gallery.description }}</p></span>
+								<p class="totalphoto">{{ gallery.totalphoto }} {{ text_photos }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+				{% endif %}
+			</div>					
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% if carousel==1 %}
+<script type="text/javascript"><!--
+$('.galle').owlCarousel({
+	items: 4,
+	autoPlay: false,
+	navigation: true,
+	navigationText: ['<i class="fa fa-chevron-left fa-5x"></i>', '<i class="fa fa-chevron-right fa-5x"></i>'],
+	pagination: false
+});
+
+--></script>
+{% endif %}

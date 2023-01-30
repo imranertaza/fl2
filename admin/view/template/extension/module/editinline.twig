@@ -1,0 +1,2171 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="container-fluid">
+        <div class="">
+            <span class="pull-right hidden-xs" id="mmos-offer"></span>
+            <ul style="margin-top: 10px; margin-bottom: 0;" class="nav nav-tabs">
+                <li class="active"><a href="#tab-setting" data-toggle="tab"><img src="//mmosolution.com/image/mmosolution_20x20.gif"> {{ heading_title }}</a></li>
+                <li><a href="#supporttabs" data-toggle="tab">{{ tab_support }}</a></li>
+                <li class="pull-right hidden-xs"><a style="background: url('//mmosolution.com/image/opencart.gif') 0px 10px no-repeat; padding-left: 20px; " title="go to Opencart Market"  href="http://www.opencart.com/index.php?route=extension/extension&filter_username=mmosolution" target="_blank">Get Extensions <span class="badge" style="background: gold;">80++</span></a></li>
+                <li class="pull-right hidden-xs"><a style="background: url('//mmosolution.com/image/mmosolution_20x20.gif') 0px 8px no-repeat; padding-left: 25px; " title="go to MMOS market"  href="http://mmosolution.com" target="_blank" class="text-success">Get Extensions <span class="badge" style="background: gold;">80++</span></a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab-setting">
+                    <div class="" style="padding-top: 10px;">
+                        <div id="editer">
+                            <div class="row drag-content">
+                                <style>
+    .dropdown-menu {
+        z-index: 99999;
+    }
+</style>
+<div class="col-md-3 col-sm-4 col-xs-12 catalog-left" style="display:{{ showhidetree ? 'block' : 'none' }}; " >
+    <h3 class="text-success" >
+        {{ entry_categories }}
+        <button type="button" data-toggle="tooltip" title="{{ text_hide  }}" id="showcategory" onclick="change_show_hide_tree($(this));" class="btn btn-default btn-sm pull-right"><i class="fa fa-outdent"></i></button>
+    </h3>
+    <input class="form-control" name="search_category" placeholder="{{ text_search_category }}" />
+    <div class="treeview">
+        <ul class="vertical" data-parent="0">
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var current_category = '{{ current_category }}';
+    $(function () {
+        $('.vertical').find('li.parent').find(' > ul > li').hide();
+        $('.vertical').find('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-down').removeClass('fa-chevron-circle-right');
+        $('a[data-referent="' + current_category + '"]').parents('li.parent').find(' > ul > li').show();
+        $('a[data-referent="' + current_category + '"]').parents('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-right').removeClass('fa-chevron-circle-down');
+    })
+
+    $('.vertical').delegate('li.parent  > span > i.expan', 'click', function (e) {
+
+        var children = $(this).parent().parent('li.parent').find(' > ul > li');
+        if (children.is(':visible')) {
+            children.hide('fast');
+            $(this).addClass('fa-chevron-circle-down').removeClass('fa-chevron-circle-right');
+        } else {
+            children.show('fast');
+            $(this).addClass('fa-chevron-circle-right').removeClass('fa-chevron-circle-down');
+        }
+        e.stopPropagation();
+    });
+
+
+    $('.vertical').delegate('.edit-category', 'click', function (e) {
+        var category_key = $(this).parent().parent().parent().parent().attr('data-rel');
+        edit_catalog(category_key, 'category');
+        e.stopPropagation();
+    });
+
+    $('.vertical').delegate('.add-category', 'click', function (e) {
+        var category_key = $(this).parent().parent().parent().parent().attr('data-rel');
+        add_sub_category(category_key);
+        e.stopPropagation();
+    });
+
+
+    $('.vertical').delegate('.delete-category', 'click', function (e) {
+        var category_key = $(this).parent().parent().parent().parent().attr('data-rel');
+        copy_delete_category($(this), 'delete', category_key);
+        e.stopPropagation();
+    });
+
+
+    $('.vertical').delegate('li > span > a', 'click', function (e) {
+        if (current_category != $(this).attr('data-referent')) {
+            var li = $(this).parent();
+            $('.vertical').find('li .item-ca').removeClass('selected');
+            $(li).addClass('selected');
+            current_category = $(this).attr('data-referent');
+            $('input[name="page"]').val(1);
+            load_product(current_category, true);
+        }
+        e.stopPropagation();
+    });
+    $('input[name=\'search_category\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['name'],
+                            value: item['category_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            current_category = item['value'];
+            $('.vertical').find('li .item-ca').removeClass('selected');
+            $('a[data-referent="' + current_category + '"]').parent().addClass('selected');
+            $('a[data-referent="' + current_category + '"]').parents('li.parent').find(' > ul > li').show();
+            $('a[data-referent="' + current_category + '"]').parents('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-right').removeClass('fa-chevron-circle-down');
+            $('.treeview').animate({ 
+                scrollTop: ($('a[data-referent="' + current_category + '"]').parent().offset().top) - ($('.treeview').outerHeight())
+            }, 600);
+
+            $('input[name="page"]').val(1);
+            load_product(current_category, true);
+        }
+    });
+</script>
+                                <div class="{{ showhidetree ? 'col-md-9' : 'col-md-12' }} col-sm-8 col-xs-12 catalog-right" >
+                                    <div id="drag-right" class="drag-height">
+                                        <div id="drag"></div>
+                                        <div class="row">
+                                            <div class="col-sm-6 col-xs-12">
+                                                <div class="product-heading"> 
+                                                    <h2 class="text-success" style="font-weight: bold;"> <button type="button" data-toggle="tooltip" title="{{ text_show }}" id="showcategory_revert" onclick="change_show_hide_tree('#showcategory');" class="btn btn-default btn-sm {{ showhidetree ? 'hidden' : '' }}"><i class="fa fa-indent"></i></button> {{ entry_products }}  </h2>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6 col-xs-6 text-right">
+                                                <div class="mass_acction">
+                                                    <div class="config-choose-template">
+                                                    <button id="open-choose-template" class="btn btn-info btn-sm" type="button" title="">{{ text_quick_choose }}<span class="caret"></span></button>
+                                                    <div id="config-choose-template">
+                                                        <div  class="content-config-mmos">
+                                                            <ul class="list-group">
+                                                            {% for template in templates %} 
+                                                            {% if  template.idtemplate == 1 %} 
+                                                            <li class="list-group-item"><a href="index.php?route=extension/module/editinline&user_token={{ user_token }}&template= {{ template.idtemplate }}"> {{ template.nametemplate }}</a></li>
+                                                             {% else %}   
+                                                            <li class="list-group-item"><a href="index.php?route=extension/module/editinline&user_token={{ user_token }}&template= {{ template.idtemplate }}"> {{ template.nametemplate }}</a><span onclick="delete_template($(this), {{ template.idtemplate }});" class="pull-right"><i class="text-danger fa fa-trash" aria-hidden="true"></i></span></li>
+                                                            {% endif %} 
+                                                            {% endfor %} 
+                                                            </ul>
+                                                        </div>  
+                                                    </div>  
+                                                    </div>  
+                                                    <button id="dropdown-filter" class="btn btn-info btn-sm" type="button" title="{{ text_show_hide_columns }}" data-toggle="collapse" data-target="#collapsecolunmpr" aria-expanded="false" aria-controls="collapsecolunmp"><i class="fa fa-table"></i> </button>
+                                                        <button type="button" data-toggle="tooltip"  title="{{ text_add_product }}" onclick="edit_catalog(0, 'product');" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></button>
+                                                        <button class="btn btn-sm btn-success all-status-change " title="{{ text_enable_all }}" data-toggle="tooltip" data-type="1" type="button"><i class="fa fa-eye"></i></button>
+                                                        <button class="btn btn-sm btn-warning all-status-change " data-type="0" data-toggle="tooltip" title="{{ text_disable_all }}" type="button"><i class="fa fa-eye-slash"></i> <span class="hidden-xs"></span></button>
+                                                        <button type="button" data-toggle="tooltip" title="{{ text_copy_product }}" data-toggle="tooltip" onclick="copy_delete_catalog($(this), 'copy', 'product');" class="btn btn-default btn-sm"><i class="fa fa-copy"></i></button>
+                                                        <button type="button" data-toggle="tooltip" title="{{ text_delete_product }}" data-toggle="tooltip" onclick="copy_delete_catalog($(this), 'delete', 'product');" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="collapse" id="collapsecolunmpr">
+                                            <hr>
+                                            <div>
+                                                <div class="">
+                                                    <div class="row">
+                                                    <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <input type="email" name="nametemplate" class="form-control" id="nametemplate" placeholder="{{ text_name_quick_choose }}">
+                                                          <div class="input-group-addon btn-primary" id="save_template_show_hide"><i class="fa fa-save"></i></div>
+                                                        </div>
+                                                       </div>
+                                                       </div>
+                                                       </div>
+                                                    <div class="checkbox">
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_product_id" onclick="change_show_hide_column($(this));"{{ showhide.column_product_id ? 'checked' : '' }}/>
+                                                                   {{ column_product_id }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_image" onclick="change_show_hide_column($(this));"{{ showhide.column_image ? 'checked' : '' }}/>
+                                                                   {{ column_image }}
+                                                        </label>
+														<label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_name" onclick="change_show_hide_column($(this));"{{ showhide.column_name ? 'checked' : '' }}/>
+                                                                   {{ column_name }}
+                                                        </label>												
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_model" onclick="change_show_hide_column($(this));"{{ showhide.column_model ? 'checked' : '' }}/>
+                                                                   {{ column_model }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_quantity" onclick="change_show_hide_column($(this));"{{ showhide.column_quantity ? 'checked' : '' }}/>
+                                                                   {{ column_quantity }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_price" onclick="change_show_hide_column($(this));"{{ showhide.column_price ? 'checked' : '' }}/>
+                                                                   {{ column_price }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_status" onclick="change_show_hide_column($(this));"{{ showhide.column_status ? 'checked' : '' }}/>
+                                                                   {{ column_status }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_manufacturer_id" onclick="change_show_hide_column($(this));"{{ showhide.column_manufacturer_id ? 'checked' : '' }}/>
+                                                                   {{ column_manufacturer_id }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_seo_keyword" onclick="change_show_hide_column($(this));"{{ showhide.column_seo_keyword ? 'checked' : '' }}/>
+                                                                   {{ column_seo_keyword }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_sort_order" onclick="change_show_hide_column($(this));"{{ showhide.column_sort_order ? 'checked' : '' }}/>
+                                                                   {{ column_sort_order }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_minimum" onclick="change_show_hide_column($(this));"{{ showhide.column_minimum ? 'checked' : '' }}/>
+                                                                   {{ column_minimum }}
+                                                        </label>
+														
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_sku" onclick="change_show_hide_column($(this));"{{ showhide.column_sku ? 'checked' : '' }}/>
+                                                                   {{ column_sku }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_upc" onclick="change_show_hide_column($(this));"{{ showhide.column_upc ? 'checked' : '' }}/>
+                                                                   {{ column_upc }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_ean" onclick="change_show_hide_column($(this));"{{ showhide.column_ean ? 'checked' : '' }}/>
+                                                                   {{ column_ean }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_jan" onclick="change_show_hide_column($(this));"{{ showhide.column_jan ? 'checked' : '' }}/>
+                                                                   {{ column_jan }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_isbn" onclick="change_show_hide_column($(this));"{{ showhide.column_isbn ? 'checked' : '' }}/>
+                                                                   {{ column_isbn }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_mpn" onclick="change_show_hide_column($(this));"{{ showhide.column_mpn ? 'checked' : '' }}/>
+                                                                   {{ column_mpn }}
+                                                        </label>
+														                                                       
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_location" onclick="change_show_hide_column($(this));"{{ showhide.column_location ? 'checked' : '' }}/>
+                                                                   {{ column_location }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_stock_status_id" onclick="change_show_hide_column($(this));"{{ showhide.column_stock_status_id ? 'checked' : '' }}/>
+                                                                   {{ column_stock_status_id }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_shipping" onclick="change_show_hide_column($(this));"{{ showhide.column_shipping ? 'checked' : '' }}/>
+                                                                   {{ column_shipping }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_points" onclick="change_show_hide_column($(this));"{{ showhide.column_points ? 'checked' : '' }}/>
+                                                                   {{ column_points }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_tax_class_id" onclick="change_show_hide_column($(this));"{{ showhide.column_tax_class_id ? 'checked' : '' }}/>
+                                                                   {{ column_tax_class_id }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_date_available" onclick="change_show_hide_column($(this));"{{ showhide.column_date_available ? 'checked' : '' }}/>
+                                                                   {{ column_date_available }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_weight" onclick="change_show_hide_column($(this));"{{ showhide.column_weight ? 'checked' : '' }}/>
+                                                                   {{ column_weight }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_weight_class_id" onclick="change_show_hide_column($(this));"{{ showhide.column_weight_class_id ? 'checked' : '' }}/>
+                                                                   {{ column_weight_class_id }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_length" onclick="change_show_hide_column($(this));"{{ showhide.column_length ? 'checked' : '' }}/>
+                                                                   {{ column_length }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_width" onclick="change_show_hide_column($(this));"{{ showhide.column_width ? 'checked' : '' }}/>
+                                                                   {{ column_width }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_height" onclick="change_show_hide_column($(this));"{{ showhide.column_height ? 'checked' : '' }}/>
+                                                                   {{ column_height }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_length_class_id" onclick="change_show_hide_column($(this));"{{ showhide.column_length_class_id ? 'checked' : '' }}/>
+                                                                   {{ column_length_class_id }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_subtract" onclick="change_show_hide_column($(this));"{{ showhide.column_subtract ? 'checked' : '' }}/>
+                                                                   {{ column_subtract }}
+                                                        </label>
+                                                        
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_store" onclick="change_show_hide_column($(this));"{{ showhide.column_store ? 'checked' : '' }}/>
+                                                                   {{ column_store }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_special" onclick="change_show_hide_column($(this));"{{ showhide.column_special ? 'checked' : '' }}/>
+                                                                   {{ column_special }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_discount" onclick="change_show_hide_column($(this));"{{ showhide.column_discount ? 'checked' : '' }}/>
+                                                                   {{ column_discount }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_category" onclick="change_show_hide_column($(this));"{{ showhide.column_category ? 'checked' : '' }}/>
+                                                                   {{ column_category }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_image_addition" onclick="change_show_hide_column($(this));"{{ showhide.column_image_addition ? 'checked' : '' }}/>
+                                                                   {{ column_image_addition }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_download" onclick="change_show_hide_column($(this));"{{ showhide.column_download ? 'checked' : '' }}/>
+                                                                   {{ column_download }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_meta_tag_description" onclick="change_show_hide_column($(this));"{{ showhide.column_meta_tag_description ? 'checked' : '' }}/>
+                                                                   {{ column_meta_tag_description }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_meta_tag_keyword" onclick="change_show_hide_column($(this));"{{ showhide.column_meta_tag_keyword ? 'checked' : '' }}/>
+                                                                   {{ column_meta_tag_keyword }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_product_tag" onclick="change_show_hide_column($(this));"{{ showhide.column_product_tag ? 'checked' : '' }}/>
+                                                                   {{ column_product_tag }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_reward" onclick="change_show_hide_column($(this));"{{ showhide.column_reward ? 'checked' : '' }}/>
+                                                                   {{ column_reward }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_select" onclick="change_show_hide_column($(this));"{{ showhide.column_select ? 'checked' : '' }}/>
+                                                                   {{ column_select }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_action" onclick="change_show_hide_column($(this));"{{ showhide.column_action ? 'checked' : '' }}/>
+                                                                   {{ column_action }}
+                                                        </label>
+                                                        <label style="padding-right: 20px;margin-bottom: 15px;">
+                                                            <input type="checkbox" name="column_drag_drop" onclick="change_show_hide_column($(this));"{{ showhide.column_drag_drop ? 'checked' : '' }}/>
+                                                                   {{ column_drag_drop }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="sort" value="{{ sort }}"/>
+                                                <input type="hidden" name="order" value="{{ order }}"/>
+                                                <input type="hidden" name="page" value="{{ page }}"/>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="table-width5555 row">
+                                            <table class="table table-bordered  table-striped sorted_table table-hover" id="table-products">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="text-center column_drag_drop" style="display: {{ showhide.column_drag_drop ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_select" style="width: 1px;display: {{ showhide.column_select ? '' : 'none' }}"><input id="mastercheckall" type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                                                        <td class="text-left column_product_id" style="display: {{ showhide.column_product_id ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'pd.product_id');" class="{{ sort == 'pd.product_id' ? order|lower : '' }}">#</a></td>
+                                                        <td class="text-left column_name" style="display: {{ showhide.column_name ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'pd.name');" class="{{ sort == 'pd.name' ? order|lower : '' }}">{{ column_name }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('name');"><i class="fa fa-paperclip"></i></button></td>
+                                                        <td class="text-center column_image" style="display: {{ showhide.column_image ? '' : 'none' }}">{{ column_image }}</td>
+                                                        <td class="text-center column_image_addition" style="display: {{ showhide.column_image_addition ? '' : 'none' }}">{{ column_image_addition }}</td>
+                                                        <td class="text-left column_download" style="display: {{ showhide.column_download ? '' : 'none' }}">{{ column_download }}</td>
+                                                        <td class="text-left column_meta_tag_description" style="display: {{ showhide.column_meta_tag_description ? '' : 'none' }}">{{ column_meta_tag_description }}</td>
+                                                        <td class="text-left column_meta_tag_keyword" style="display: {{ showhide.column_meta_tag_keyword ? '' : 'none' }}">{{ column_meta_tag_keyword }}</td>
+                                                        <td class="text-left column_product_tag" style="display: {{ showhide.column_product_tag ? '' : 'none' }}">{{ column_product_tag }}</td>
+
+                                                        <td class="text-left column_category" style="display: {{ showhide.column_category ? '' : 'none' }}">{{ column_category }}</td>
+
+                                                        <td class="text-left column_special" style="display: {{ showhide.column_special ? '' : 'none' }}">{{ column_special }}</td>
+                                                        <td class="text-left column_discount" style="display: {{ showhide.column_discount ? '' : 'none' }}">{{ column_discount }}</td>
+                                                        
+                                                        <td class="text-left column_model" style="display: {{ showhide.column_model ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.model');" class="{{ sort == 'p.model' ? order|lower : '' }}">{{ column_model }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('model');"><i class="fa fa-paperclip"></i></button></td>
+														<td class="text-left column_quantity" style="display: {{ showhide.column_quantity ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.quantity');" class="{{ sort == 'p.quantity' ? order|lower : '' }}">{{ column_quantity }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('quantity');"><i class="fa fa-paperclip"></i></button></td>
+														<td class="text-left column_price" style="display: {{ showhide.column_price ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.price');" class="{{ sort == 'p.price' ? order|lower : '' }}">{{ column_price }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('price');"><i class="fa fa-paperclip"></i></button></td>
+														
+                                                        <td class="text-left column_status" style="display: {{ showhide.column_status ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.status');" class="{{ sort == 'p.status' ? order|lower : '' }}">{{ column_status }}</a></td>
+														<td class="text-left column_manufacturer_id" style="display: {{ showhide.column_manufacturer_id ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.manufacturer_id');" class="{{ sort == 'p.manufacturer_id' ? order|lower : '' }}">{{ column_manufacturer_id }}</a></td>
+														<td class="text-left column_seo_keyword" style="display: {{ showhide.column_seo_keyword ? '' : 'none' }}">{{ column_seo_keyword }}<button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('seo_keyword');"><i class="fa fa-paperclip"></i></button></td>
+														<td class="text-left column_sort_order" style="display: {{ showhide.column_sort_order ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.sort_order');" class="{{ sort == 'p.sort_order' ? order|lower : '' }}">{{ column_sort_order }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('sort_order');"><i class="fa fa-paperclip"></i></button></td>
+														<td class="text-left column_minimum" style="display: {{ showhide.column_minimum ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.minimum');" class="{{ sort == 'p.minimum' ? order|lower : '' }}">{{ column_minimum }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('minimum');"><i class="fa fa-paperclip"></i></button></td>
+														
+														<td class="text-left column_sku" style="display: {{ showhide.column_sku ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.sku');" class="{{ sort == 'p.sku' ? order|lower : '' }}">{{ column_sku }}</a></td>
+														<td class="text-left column_upc" style="display: {{ showhide.column_upc ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.upc');" class="{{ sort == 'p.upc' ? order|lower : '' }}">{{ column_upc }}</a></td>
+														<td class="text-left column_ean" style="display: {{ showhide.column_ean ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.ean');" class="{{ sort == 'p.ean' ? order|lower : '' }}">{{ column_ean }}</a></td>
+														<td class="text-left column_jan" style="display: {{ showhide.column_jan ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.jan');" class="{{ sort == 'p.jan' ? order|lower : '' }}">{{ column_jan }}</a></td>
+														<td class="text-left column_isbn" style="display: {{ showhide.column_isbn ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.isbn');" class="{{ sort == 'p.isbn' ? order|lower : '' }}">{{ column_isbn }}</a></td>
+														<td class="text-left column_mpn" style="display: {{ showhide.column_mpn ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.mpn');" class="{{ sort == 'p.mpn' ? order|lower : '' }}">{{ column_mpn }}</a></td>
+														<td class="text-left column_location" style="display: {{ showhide.column_location ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.location');" class="{{ sort == 'p.location' ? order|lower : '' }}">{{ column_location }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('location');"><i class="fa fa-paperclip"></i></button></td>
+														
+														<td class="text-left column_stock_status_id" style="display: {{ showhide.column_stock_status_id ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.stock_status_id');" class="{{ sort == 'p.stock_status_id' ? order|lower : '' }}">{{ column_stock_status_id }}</a></td>
+														<td class="text-left column_shipping" style="display: {{ showhide.column_shipping ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.shipping');" class="{{ sort == 'p.shipping' ? order|lower : '' }}">{{ column_shipping }}</a></td>
+														<td class="text-left column_points" style="display: {{ showhide.column_points ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.points');" class="{{ sort == 'p.points' ? order|lower : '' }}">{{ column_points }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('{{ points }}');"><i class="fa fa-paperclip"></i></button></td>
+														
+														<td class="text-left column_tax_class_id" style="display: {{ showhide.column_tax_class_id ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.tax_class_id');" class="{{ sort == 'p.tax_class_id' ? order|lower : '' }}">{{ column_tax_class_id }}</a></td>
+														<td class="text-left column_date_available" style="display: {{ showhide.column_date_available ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.date_available');" class="{{ sort == 'p.date_available' ? order|lower : '' }}">{{ column_date_available }}</a></td>
+														<td class="text-left column_weight" style="display: {{ showhide.column_weight ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.weight');" class="{{ sort == 'p.weight' ? order|lower : '' }}">{{ column_weight }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('{{ weight }}');"><i class="fa fa-paperclip"></i></button></td>
+														
+														<td class="text-left column_weight_class_id" style="display: {{ showhide.column_weight_class_id ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.weight_class_id');" class="{{ sort == 'p.weight_class_id' ? order|lower : '' }}">{{ column_weight_class_id }}</a></td>
+														<td class="text-left column_length" style="display: {{ showhide.column_length ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.length');" class="{{ sort == 'p.length' ? order|lower : '' }}">{{ column_length }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('{{ length }}');"><i class="fa fa-paperclip"></i></button></td>
+														<td class="text-left column_width" style="display: {{ showhide.column_width ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.width');" class="{{ sort == 'p.width' ? order|lower : '' }}">{{ column_width }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('{{ width }}');"><i class="fa fa-paperclip"></i></button></td>
+														<td class="text-left column_height" style="display: {{ showhide.column_height ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.height');" class="{{ sort == 'p.height' ? order|lower : '' }}">{{ column_height }}</a><button type="button" class="btn btn-primary btn-xs pull-right" onclick="bulkproduct('{{ height }}');"><i class="fa fa-paperclip"></i></button></td>
+                                                        
+														<td class="text-left column_length_class_id" style="display: {{ showhide.column_length_class_id ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.length_class_id');" class="{{ sort == 'p.length_class_id' ? order|lower : '' }}">{{ column_length_class_id }}</a></td>
+														<td class="text-left column_subtract" style="display: {{ showhide.column_subtract ? '' : 'none' }}"><a href="javascript: void(0);" onclick="sort_order($(this), 'p.subtract');" class="{{ sort == 'p.subtract' ? order|lower : '' }}">{{ column_subtract }}</a></td>
+
+                                                        <td class="text-left column_store" style="display: {{ showhide.column_store ? '' : 'none' }}">{{ column_store }}</td>
+                                                        <td class="text-left column_reward" style="display: {{ showhide.column_reward ? '' : 'none' }}">{{ column_reward }}</td>
+                                                        <td class="text-center column_action" style="display: {{ showhide.column_action ? '' : 'none' }}">{{ column_action }}</td>
+                                                    </tr>
+
+                                                    <tr id="filter-row">
+                                                        <td class="text-center column_drag_drop" style="display: {{ showhide.column_drag_drop ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_select" style="width: 1px;display: {{ showhide.column_select ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_product_id" style="display: {{ showhide.column_product_id ? '' : 'none' }} ;min-width: 60px; max-width: 90px;"><input type="text" name="filter_product_id" value="{{ filter_product_id }}" placeholder="{{ entry_product_id }}" id="input-name" class="form-control input-sm" /></td>
+
+                                                        <td class="text-left column_name" style="display: {{ showhide.column_name ? '' : 'none' }}; min-width: 150px;"><input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control input-sm" /></td>
+                                                        <td class="text-center column_image" style="display: {{ showhide.column_image ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_image_addition" style="display: {{ showhide.column_image_addition ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_download" style="display: {{ showhide.column_download ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_meta_tag_description" style="display: {{ showhide.column_meta_tag_description ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_meta_tag_keyword" style="display: {{ showhide.column_meta_tag_keyword ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_product_tag" style="display: {{ showhide.column_product_tag ? '' : 'none' }}"></td>
+
+                                                        <td class="text-left column_category" style="display: {{ showhide.column_category ? '' : 'none' }}"></td>
+
+                                                        <td class="text-left column_special" style="display: {{ showhide.column_special ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_discount" style="display: {{ showhide.column_discount ? '' : 'none' }}"></td>
+
+                                                        <td class="text-left column_model" style="min-width: 120px; display: {{ showhide.column_model ? '' : 'none' }}">
+                                                            <input type="text" name="filter_model" value="{{ filter_model }}" placeholder="{{ entry_model }}" id="input-model" class="form-control input-sm" />
+                                                        </td>
+
+                                                        <td class="text-left column_quantity" style="min-width: 120px; display: {{ showhide.column_quantity ? '' : 'none' }}">
+                                                            <input type="text" name="filter_quantity" value="{{ filter_quantity }}" placeholder=">5" id="input-quantity" class="form-control  input-sm" />
+                                                        </td>
+														
+														
+                                                        <td class="text-left column_price" style="min-width: 120px; display: {{ showhide.column_price ? '' : 'none' }}">
+                                                            <input type="text" name="filter_price" value="{{ filter_price }}" placeholder="> 50" id="input-price" class="form-control input-sm" />
+                                                        </td>
+
+                                                        <td class="text-left column_status" style="min-width: 100px; display: {{ showhide.column_status ? '' : 'none' }}">
+                                                            <select name="filter_status" id="input-status" class="form-control input-sm">
+                                                                <option value="*"></option>
+                                                                {% if  filter_status %} 
+                                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                                                 {% else %}   
+                                                                <option value="1">{{ text_enabled }}</option>
+                                                                {% endif %} 
+                                                                {% if  not filter_status  and filter_status is not null %}
+                                                                <option value="0" selected="selected">{{ text_disabled}}</option>
+                                                                 {% else %}   
+                                                                <option value="0">{{ text_disabled }}</option>
+                                                                {% endif %} 
+                                                            </select>
+                                                        </td>
+
+                                                        <td class="text-left column_manufacturer_id" style="min-width: 120px; display: {{ showhide.column_manufacturer_id ? '' : 'none' }}">
+                                                            <select name="filter_manufacturer_id" id="input-manufacturer_id" class="form-control input-sm">
+                                                                <option value="*"></option>
+                                                                {% for manufacturer in manufacturers %} 
+                                                                {% if  filter_manufacturer_id == manufacturer.manufacturer_id %} 
+                                                                <option value="{{ manufacturer.manufacturer_id }}" selected>{{ manufacturer.name }}</option>
+                                                                 {% else %}   
+                                                                <option value="{{ manufacturer.manufacturer_id }}">{{ manufacturer.name }}</option>
+                                                                {% endif %} 
+                                                                {% endfor %} 
+
+                                                            </select>
+                                                        </td>
+
+                                                        <td  class="text-left column_shipping" style="min-width: 120px; display: {{ showhide.column_shipping ? '' : 'none' }}">
+                                                            <select name="filter_shipping" id="input-shipping" class="form-control input-sm">
+                                                                <option value="*"></option>
+                                                                {% if  filter_shipping %} 
+                                                                <option value="1" selected="selected">{{ text_yes }}</option>
+                                                                 {% else %}   
+                                                                <option value="1">{{ text_yes }}</option>
+                                                                {% endif %} 
+                                                                {% if  not filter_shipping  and filter_shipping  is not null %}
+                                                                <option value="0" selected="selected">{{ text_no}}</option>
+                                                                 {% else %}   
+                                                                <option value="0">{{ text_no }}</option>
+                                                                {% endif %} 
+                                                            </select>
+                                                        </td>
+
+                                                        <td  class="text-left column_stock_status_id" style="min-width: 120px; display: {{ showhide.column_stock_status_id ? '' : 'none' }}">
+                                                            <select name="filter_stock_status" id="input-stock-status" class="form-control input-sm">
+                                                                <option value="*"></option>
+                                                                {% for stock_status in stock_statuses %} 
+                                                                <option value="{{ stock_status.stock_status_id }}" {{ filter_stock_status is not null  and  filter_stock_status == stock_status.stock_status_id ? 'selected' : '' }}>{{ stock_status.name }}</option>
+                                                                {% endfor %} 
+                                                            </select>
+                                                        </td>
+
+                                                        <td  class="text-left column_tax_class_id" style="min-width: 120px; display: {{ showhide.column_tax_class_id ? '' : 'none' }}">
+                                                            <select name="filter_tax_class" id="input-tax-class" class="form-control input-sm">
+                                                                <option value="*"></option>
+                                                                {% for tax_class in tax_classes %} 
+                                                                <option value="{{ tax_class.tax_class_id }}"{{ filter_tax_class is not null  and  filter_tax_class == tax_class.tax_class_id ? 'selected' : '' }}>{{ tax_class.title }}</option>
+                                                                {% endfor %} 
+                                                            </select>
+                                                        </td>
+
+                                                        <td  class="text-left column_date_available" style="min-width: 120px; max-width: 150px; display: {{ showhide.column_date_available ? '' : 'none' }}">
+                                                            <div class="input-group date">
+                                                                <input type="text" name="filter_date_available" value="{{ filter_date_available }}" placeholder="{{ entry_date_available }}" data-date-format="YYYY-MM-DD" id="input-date-available" class="form-control input-sm" />
+                                                                <span class="input-group-btn">
+                                                                    <button class="btn btn-default btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                                                                </span>
+                                                            </div>
+                                                        </td>
+																									
+                                                        <td class="text-left column_seo_keyword" style="display: {{ showhide.column_seo_keyword ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_sort_order" style="display: {{ showhide.column_sort_order ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_minimum" style="display: {{ showhide.column_minimum ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_sku" style="display: {{ showhide.column_sku ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_upc" style="display: {{ showhide.column_upc ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_ean" style="display: {{ showhide.column_ean ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_jan" style="display: {{ showhide.column_jan ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_isbn" style="display: {{ showhide.column_isbn ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_mpn" style="display: {{ showhide.column_mpn ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_location" style="display: {{ showhide.column_location ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_points" style="display: {{ showhide.column_points ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_weight" style="display: {{ showhide.column_weight ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_weight_class_id" style="display: {{ showhide.column_weight_class_id ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_length" style="display: {{ showhide.column_length ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_width" style="display: {{ showhide.column_width ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_height" style="display: {{ showhide.column_height ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_length_class_id" style="display: {{ showhide.column_length_class_id ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_subtract" style="display: {{ showhide.column_subtract ? '' : 'none' }}"></td>
+
+                                                        <td class="text-left column_store" style="display: {{ showhide.column_store ? '' : 'none' }}"></td>
+                                                        <td class="text-left column_reward" style="display: {{ showhide.column_reward ? '' : 'none' }}"></td>
+                                                        <td class="text-center column_action" style="display: {{ showhide.column_action ? '' : 'none' }}">
+                                                            <button type="button" id="button-filter" class="btn btn-sm btn-primary"><i class="fa fa-filter"></i></button>
+                                                            <button type="button" id="button-clear-filter" class="btn btn-sm btn-danger"><i class="fa fa-warning"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row">
+                                            <div class="btn-toolbar col-sm-12 bg-info text-right"  role="toolbar">
+                                                <div class="mmos-pagination  btn-group" role="group"></div>
+                                                <div class="input-group btn-group">
+                                                    <select name="filter_show_limit" id="input-show-limit" aria-describedby="basic-addon1" class="form-control" onchange="$('#button-filter').trigger('click');">
+                                                        {% for limit in limits %}
+                                                        {% if limit == filter_show_limit %} 
+                                                        <option value="{{ limit }}" selected>{{ limit }}</option>
+                                                         {% else %}   
+                                                        <option value="{{ limit }}">{{ limit }}</option>
+                                                        {% endif %} 
+                                                        {% endfor %} 
+                                                    </select>
+                                                </div>
+                                                <div class="mmos-pagination-text btn-group   navbar-btn"></div>
+                                            </div> 
+                                        </div> 
+                                        <div id="footer-for-drag"></div>     
+                                    </div>                  
+                                </div>
+                            </div>
+                        </div>
+                        <div id="catalog-content" class="hidden">
+                            <div class="pull-right" style="margin-bottom: 20px;">
+                                <a href="javascript: void(0);" id="back-list" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-danger"><i class="fa fa-reply"></i></a>
+                            </div>
+                            <iframe style="width: 100%; min-height: 1000px; border: none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="supporttabs">
+                    <div class="panel ">
+                        <div class="panel-body ">
+                            <!-- begin MMOSolution.com -->
+                            <div class="row">
+                                <div class="col-md-6 col-xs-12">
+                                    <h2 class="text-success text-center">Thank You For Choosing MMO Solution  <i class="fa fa-trophy"></i></h2>
+                                    <div class="panel-body text-center">
+                                        <h4><i class="fa fa-tags"></i> About {{ heading_title }}</h4>
+                                        <h5><i class="fa fa-lock"></i> Installed Version: V.{{ MMOS_version }} </h5>
+                                        <h5><i class="fa fa-tree"></i> Latest version: <span id="mmos_latest_version"><a href="http://mmosolution.com/index.php?route=product/search&search={{ heading_title }}" target="_blank">Unknown -- Check</a></span></h5>
+                                        <br>
+                                        <h5 class="hidden-sm"><a style="background: url('//mmosolution.com/image/mmosolution_20x20.gif') 0px 0px no-repeat; padding-left: 25px; " title="go to MMOS market"  href="http://mmosolution.com" target="_blank" class="text-success">Get More Extensions on our site <span id="ontabspromotion"></span></a></h5>
+                                        <h5 class="hidden-sm"><a style="  background: url('//mmosolution.com/image/opencart.gif') 0px 0px no-repeat; padding-left: 20px; " title="go to Opencart Market"  href="http://www.opencart.com/index.php?route=extension/extension&filter_username=mmosolution" target="_blank"> Get More Our Extensions on Opencart Market</a></h5><br>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xs-12">
+                                    <h3 class="text-center"><i class="fa fa-info-circle"></i> Please inform us if you get any troubles & give feedback!</h3>
+                                    <div id="contact-infor" class="text-center">
+                                        <h4> <i class="fa fa-envelope-o text-primary"></i> <a href="mailto:support@mmosolution.com?Subject={{ heading_title }}{{  ' OC ' }}{{  opencart_version }}" target="_top">support@mmosolution.com</a></h4>
+                                        <h4><i class="fa fa-globe text-success"></i> <a href="http://MMOSolution.com" target="_blank">Www.MMOSolution.com</a></h4>
+                                        <h4><i class="fa fa-ticket text-warning"></i> <a href="http://MMOSolution.com/support/" target="_blank">Submit a support Ticket</a></h4>
+                                        <h4><i class="fa fa-hand-o-right"></i> <a href="http://MMOSolution.com/support/" target="_blank">Do you need custom-work, custom extensions, fix extensions of another developer? Resolve your site troubles.. ?</a></h4>
+                                        <br>
+                                        <h3><i class="fa fa-heart-o text-danger"></i> Follow us on the social media web sites.</h3>
+                                        <a href="http://www.facebook.com/MMOSolution" target="_blank" title=" Facecook.com"><i class="fa fa-2x fa-facebook-square"></i></a>
+                                        <a class="text-danger" href="http://plus.google.com/+Mmosolution" target="_blank" title="Google Plus"><i class="fa  fa-2x fa-google-plus-square"></i></a>
+                                        <a class="text-warning" href="http://MMOSolution.com/mmosolution_rss.rss" target="_blank" title="RSS"><i class="fa fa-2x fa-rss-square"></i></a>
+                                        <a href="http://twitter.com/MMOSolution" target="_blank" title="Twitter"><i class="fa fa-2x fa-twitter-square"></i></a>
+                                        <a class="text-danger" href="http://www.youtube.com/MMOSolution" target="_blank" title="Youtube.com"><i class="fa fa-2x fa-youtube-square"></i></a>
+                                    </div>
+                                </div>
+                                <div id="relate-products"></div> 
+                                <script type="text/javascript">
+                                    var productcode = '{{ MMOS_code_id }}';
+                                    $('a[href="#supporttabs"]').bind('click', function () {
+                                        $('#ontabspromotion').html('(' + $('#mmos-offer').html() + ')');
+                                    });</script>
+                                <!-- DO NOT REMOVE -->
+                                <script type="text/javascript" src="//mmosolution.com/support.js"></script>
+                            </div>
+                            <!-- end MMOSolution.com -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-product" tabindex="-1"  role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="hidden" name="product_id" value="" />
+                <input type="hidden" name="name" value="" />
+                <input type="hidden" name="type" value="" />
+                <div class="row">
+                    <div class="col-sm-12" id="beyond-product-content">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ text_close }}</button>
+                <button type="button" class="btn btn-primary" data-loading-text="{{ text_loading }}" id="save-beyond-product">{{ text_save }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="update-downlload" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="download_id" />
+                {% for language in languages %} 
+                <div class="input-group"> <span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+                    <input type="text" name="download_description[{{ language.language_id }}][name]" value="" placeholder="Name" class="form-control" />
+                </div>
+                {% endfor %} 
+                <div class="text-danger" id="error-name-upload"></div>
+                <br/>
+                <div class="input-group">
+                    <input type="text" name="filename" value="" placeholder="Filename" id="input-filename" class="form-control" />
+                    <span class="input-group-btn">
+                        <button type="button" id="mmos-button-upload" data-loading-text="Loading..." class="btn btn-primary"><i class="fa fa-upload"></i> Upload</button>
+                    </span>
+                </div>
+                <div class="text-danger" id="error-filename"></div>
+                <br/>
+                <input type="text" name="mask" value="" placeholder="Mask" id="input-mask" class="form-control" />
+                <div class="text-danger" id="error-mask"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="text-success pull-left" id="upldate-success"></div> 
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-update-download">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="bulk-product" tabindex="-1"  role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="hidden" name="type" value="" />
+                <div class="row">
+                    <div class="col-sm-12" id="bulk-product-content">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ text_close }}</button>
+                <button type="button" class="btn btn-primary" data-loading-text="{{ text_loading }}" id="save-bulk-product">{{ text_save }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    // global value
+    
+ 
+
+    var current_category = '{{ current_category }}';
+    var special_row = 0;
+    var discount_row = 0;
+    var editinline_buttons = '<span class="input-group-btn"><button class="btn btn-success" type="button"><i class="fa fa-check"></i></button><button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button></span>';
+
+    $(document).ajaxSend(function (event, xhr, settings) {
+        settings.url = settings.url + '&user_token={{ user_token }}';
+    });
+    // fixes bug when admin session expires
+    /*
+     $(document).ajaxComplete(function( event, xhr, settings ) {     
+     //var admin_loggout = settings.getResponseHeader("content-type") || "";
+     if(xhr.responseJSON === undefined ){
+     location.reload();
+     }    
+     }); */
+    
+    $(function () {
+         var exist_filter = 0;
+            $("input[name^='filter']").each( function( index, value ) {
+                if($(this).val()) {
+                    exist_filter = 1;
+
+                    return;
+                } 
+                
+             });
+             if(exist_filter) {
+                $('#button-filter').trigger('click');
+                
+             } else {
+                load_product(current_category, true);
+             }
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/categories',
+            dataType: 'json',
+            success: function (json) {
+                $("ul.vertical").html(json['html']);
+                $('body').removeClass('dragging');
+                $('.vertical').find('li.parent').find(' > ul > li').hide();
+                $('.vertical').find('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-down').removeClass('fa-chevron-circle-right');
+                $('a[data-referent="' + current_category + '"]').parents('li.parent').find(' > ul > li').show();
+                $('a[data-referent="' + current_category + '"]').parents('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-right').removeClass('fa-chevron-circle-down');
+                $('.treeview').animate({ 
+                    scrollTop: ($('a[data-referent="' + current_category + '"]').parent().offset().top) - ($('.treeview').outerHeight())
+                }, 600);
+            }
+        });
+        //$('a[data-referent="' + current_category + '"]').parent().addClass('selected');
+    })
+
+    $('.date').datetimepicker({
+        pickTime: false
+    });
+
+
+
+    $('.mmos-pagination').on('click', 'li a', function () {
+        var pagetext = $(this).attr('href');
+        var pages = pagetext.split('#mmosolution_page-');
+
+
+        var page = parseInt(pages[1]);
+        $('input[name="page"]').val(page);
+        load_product(current_category, true);
+        return false;
+    });
+
+
+    function action_button(type, product_id, show) {
+        if (show == 0) {
+            var buttons = '<div style="margin-top:5px; display:none;" class="btn-group"><button data-type="' + type + '" data-product-id="' + product_id + '" class="btn btn-danger mmoscancel" type="button"><i class="fa fa-times"></i></button><button data-type="' + type + '" data-product-id="' + product_id + '" class="btn btn-success mmossave" type="button"><i class="fa fa-check"></i></button></div>';
+        } else {
+            var buttons = '<div style="margin-top:5px;" class="btn-group"><button data-type="' + type + '" data-product-id="' + product_id + '" class="btn btn-danger mmoscancel" type="button"><i class="fa fa-times"></i></button><button data-type="' + type + '" data-product-id="' + product_id + '" class="btn btn-success mmossave" type="button"><i class="fa fa-check"></i></button></div>';
+
+        }
+        return buttons;
+    }
+
+    /*action change name*/
+    $(document).on('click', '.onedit_name button.mmossave', function (e) {
+        var that = $(this);
+        var postdata = that.parent().parent().find('div.input-group :input').serialize().toString();
+        var product_id = that.attr('data-product-id');
+        var type = that.attr('data-type');
+
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/updateproduct',
+            type: 'post',
+            data: postdata + '&product_id=' + product_id + '&type=' + type + '&name=' + name,
+            dataType: 'json',
+            beforeSend: function () {
+                that.html('<i class="fa fa-refresh fa-spin"></i>');
+            },
+            complete: function () {
+                that.html('<i class="fa fa-check"></i>');
+            },
+            success: function (json) {
+                if (json['success']) {
+                    $('.alert-success, .text-danger').remove();
+                    that.closest('div.cellEditing').html(json['newValue']).removeClass('cellEditing');
+
+                    $('.table-width1').width($('#table-products').width());
+                    $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+                if (json['warning']) {
+
+                    that.closest('div.cellEditing').append('<span class="text-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '</span>');
+                }
+            }
+        });
+
+    });
+
+    $(document).on('click', 'button.mmoscancel', function (e) {
+        $(this).closest('div.cellEditing').removeClass('cellEditing');
+        $(this).closest('div.onedit_name, div.oneditinline').remove();
+
+    });
+
+    /*action change another*/
+    $(document).on('click', 'div.oneditinline button.mmossave', function (e) {
+        var that = $(this);
+
+
+        var newValue = that.parents('div.cellEditing').find('div.input-group input').val();
+        if (newValue === undefined) {
+            var newValue = that.parents('div.cellEditing').find('div.input-group select').val();
+        }
+
+        var product_id = that.attr('data-product-id');
+        var type = that.attr('data-type');
+        // e.stopPropagation();
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/updateproduct',
+            type: 'post',
+            data: 'product_id=' + product_id + '&type=' + type + '&value=' + encodeURIComponent(newValue) + '&name=' + name,
+            dataType: 'json',
+            beforeSend: function () {
+                that.html('<i class="fa fa-refresh fa-spin"></i>');
+            },
+            complete: function () {
+                that.html('<i class="fa fa-check"></i>');
+            },
+            success: function (json) {
+                if (json['success']) {
+                    $('.alert-success').remove();
+
+                    that.closest('div.cellEditing').html(json['newValue']).removeClass('cellEditing');
+
+                    $('.table-width1').width($('#table-products').width());
+                    $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+                if (json['warning']) {
+                    $('#table-products .text-danger').remove();
+                    that.parent().after('<span class="clear text-danger"><br><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '</span>');
+                }
+            }
+        });
+    });
+
+
+    function load_product(category_id, rel) {
+        var url = '';
+        var filter_product_id = $('input[name=\'filter_product_id\']').val();
+        if (filter_product_id !== '') {
+            url += '&filter_product_id=' + encodeURIComponent(filter_product_id);
+        }
+        var filter_name = $('input[name=\'filter_name\']').val();
+        if (filter_name !== '') {
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+
+        var filter_model = $('input[name=\'filter_model\']').val();
+        if (filter_model !== '') {
+            url += '&filter_model=' + encodeURIComponent(filter_model);
+        }
+
+        var filter_date_available = $('input[name=\'filter_date_available\']').val();
+        if (filter_date_available) {
+            url += '&filter_date_available=' + encodeURIComponent(filter_date_available);
+        }
+
+        var filter_price = $('input[name=\'filter_price\']').val();
+        if (filter_price !== '') {
+            url += '&filter_price=' + encodeURIComponent(filter_price);
+        }
+
+        var filter_quantity = $('input[name=\'filter_quantity\']').val();
+        if (filter_quantity !== '') {
+            url += '&filter_quantity=' + encodeURIComponent(filter_quantity);
+        }
+
+        var filter_status = $('select[name=\'filter_status\']').val();
+        if (filter_status != '*') {
+            url += '&filter_status=' + encodeURIComponent(filter_status);
+        }
+
+        var filter_shipping = $('select[name=\'filter_shipping\']').val();
+        if (filter_shipping != '*') {
+            url += '&filter_shipping=' + encodeURIComponent(filter_shipping);
+        }
+        var filter_manufacturer_id = $('select[name=\'filter_manufacturer_id\']').val();
+        if (filter_manufacturer_id != '*') {
+            url += '&filter_manufacturer_id=' + encodeURIComponent(filter_manufacturer_id);
+        }
+
+        var filter_stock_status = $('select[name=\'filter_stock_status\']').val();
+        if (filter_stock_status != '*') {
+            url += '&filter_stock_status=' + encodeURIComponent(filter_stock_status);
+        }
+
+        var filter_tax_class = $('select[name=\'filter_tax_class\']').val();
+        if (filter_tax_class != '*') {
+            url += '&filter_tax_class=' + encodeURIComponent(filter_tax_class);
+        }
+
+        var filter_show_limit = $('select[name=\'filter_show_limit\']').val();
+        if (filter_show_limit != '*') {
+            url += '&filter_show_limit=' + encodeURIComponent(filter_show_limit);
+        }
+
+        var sort = $('input[name=\'sort\']').val();
+        if (sort) {
+            url += '&sort=' + encodeURIComponent(sort);
+        }
+
+        var order = $('input[name=\'order\']').val();
+        if (order) {
+            url += '&order=' + encodeURIComponent(order);
+        }
+
+        var page = $('input[name=\'page\']').val();
+        if (page) {
+            url += '&page=' + encodeURIComponent(page);
+        }
+
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/products',
+            type: 'post',
+            data: 'category_id=' + category_id + url,
+            dataType: 'json',
+            beforeSend: function () {
+                if (rel) {
+                    $('#table-products tbody').html('<tr class="text-center loading"><td colspan="30"><img src="view/javascript/mmosolution/tree/image/loading_1.gif"/></td></tr>');
+                }
+            },
+            complete: function () {
+                if (rel) {
+                    $('.loading').remove();
+                }
+            },
+            success: function (json) {
+                $('.alert-success').remove();
+                $('.alert-danger').remove();
+                $('#table-products tbody').html(json['html']);
+                if (json['edit_breadcrumb']) {
+                    $('.edit-breadcrumb').html('<li>{{ entry_current_category }}</li><li>' + json['edit_breadcrumb'] + '</li>');
+                }
+
+                if (typeof json['pagination'] != 'undefined') {
+                    $('.mmos-pagination').html(json['pagination']);
+                    $('.mmos-pagination-text').html(json['pagination_text']);
+                }
+
+
+                $('input[name*="column"]').each(function () {
+                    if ($(this).is(':checked')) {
+                        $('.' + $(this).attr('name')).show();
+                    } else {
+                        $('.' + $(this).attr('name')).hide();
+                    }
+                });
+            }
+        });
+    }
+
+    // action change yes no type
+
+    $(document).on('click', '.action_yes_no', function () {
+        var that = $(this);
+
+        var product_id = that.closest('tr').attr('data-product');
+
+        var type = that.closest('td').attr('data-column-type');
+
+        var newValue = that.attr('data-new-status');
+
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/updateproduct',
+            type: 'post',
+            data: 'product_id=' + product_id + '&type=' + type + '&value=' + newValue,
+            dataType: 'json',
+            beforeSend: function () {
+                that.button('loading').after('<i class="fa fa-refresh fa-spin applying"></i>').attr('disabled', 'disabled');
+            },
+            complete: function () {
+                that.button('reset').removeAttr('disabled');
+                $('.applying').remove();
+            },
+            success: function (json) {
+                if (json['success']) {
+                    that.replaceWith(json['newValue']);
+                }
+                if (json['warning']) {
+                    that.after('<span class="text-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '</span>');
+                }
+            }
+        });
+    });
+
+    function edit_inline_select(target, column, product_id, name) {
+
+        var OriginalContent = target.text();
+
+        var select_boxes = ['stock_status_id', 'manufacturer_id', 'tax_class_id', 'date_available', 'length_class_id'];
+
+        if (!target.hasClass('cellEditing')) {
+            target.addClass("cellEditing");
+
+            $.ajax({
+                url: 'index.php?route=extension/module/editinline/get_edit_inline&column=' + encodeURIComponent(column),
+                type: 'get',
+                dataType: 'json',
+                success: function (json) {
+                    var html = '<div  class="oneditinline"><div class="input-group" style="max-width: 200px; margin-top:5px;">';
+                    html += '<select class="form-control">';
+
+                    if (json['data']) {
+                        $.each(json['data'], function (key, value) {
+                            if (value['title'] !== undefined) {
+
+                                var text = value['title'];
+
+                            } else if (value['name'] !== undefined) {
+                                var text = value['name'];
+                            }
+
+                            if (text == OriginalContent) {
+                                html += '<option value="' + value[column] + '" selected>' + text + '</option>';
+                            } else {
+                                html += '<option value="' + value[column] + '" >' + text + '</option>';
+                            }
+                        });
+                    }
+                    html += "</select>";
+
+                    html += '</div>' + action_button(column, product_id, 0) + '</div>';
+                    target.append(html);
+                    target.find('div.oneditinline select').focus();
+                }
+            });
+        }
+    }
+
+    function edit_inline_text(target, type, product_id, name) {
+
+        var OriginalContent = target.text();
+
+        if (!target.hasClass('cellEditing')) {
+            target.addClass("cellEditing");
+            html = '<div  class="oneditinline"><div class="input-group" style="max-width: 200px; margin-top:5px;">';
+            if (type == 'date_available') {
+                html += "<input type='text' value='" + OriginalContent + "' data-date-format='YYYY-MM-DD' class='form-control date'/>";
+
+            } else {
+                html += "<input type='text' value='" + OriginalContent + "' class='form-control'/>";
+            }
+
+            html += '</div>' + action_button(type, product_id) + "</div>";
+
+            target.append(html);
+            target.find('div.input-group :input').focus();
+            $('.date').datetimepicker({pickTime: false});
+        }
+    }
+
+    function getedit_edit_inline(column) {
+        var databack;
+        $.getJSON('index.php?route=extension/module/editinline/get_edit_inline&column=' + encodeURIComponent(column), function (json) {
+            databack = json['data'];
+        });
+        return databack;
+    }
+
+    function edit_name(target, type, product_id) {
+        if (!target.hasClass('cellEditing')) {
+            target.addClass("cellEditing");
+            $.ajax({
+                url: 'index.php?route=extension/module/editinline/getmultiname',
+                type: 'post',
+                data: 'product_id=' + product_id,
+                dataType: 'json',
+                success: function (json) {
+                    var html = '<div  class="onedit_name" >';
+                            {% for language in languages %} 
+                             html += "<div  class='form-group'><div class='input-group'><span class='input-group-addon'><img src='language/{{ language.code }}/{{ language.code }}.png' title='{{ language.name }}'/></span><input type='text' name='value[{{ language.language_id }}]' value='" + json['multi_name']['{{ language.language_id }}'] + "' class='form-control'/></div></div>";
+                            {% endfor %} 
+                            html += action_button(type, product_id);
+                    html += "</div>";
+                    target.append(html);
+
+                    target.find('div.form-group input').focus();
+                }
+            });
+        }
+    }
+
+    function edit_catalog(catalog_id, type) {
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/contentcatalog',
+            type: 'post',
+            data: 'catalog_id=' + catalog_id + '&type=' + type,
+            dataType: 'json',
+            beforeSend: function () {
+                $('#editer').hide();
+                $('#catalog-content').toggleClass('hidden');
+                $('#catalog-content').prepend('<div class="text-center loading"><img src="view/javascript/mmosolution/tree/image/loading_1.gif"/></div>');
+            },
+            complete: function () {
+                $('.loading').remove();
+            },
+            success: function (json) {
+                if (json['url']) {
+                    $('#catalog-content iframe').attr('src', json['url']);
+                }
+            }
+        });
+    }
+    function add_sub_category(parent) {
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/contentcatalog',
+            type: 'post',
+            data: 'catalog_id=0' + '&parent_id=' + parent + '&type=category',
+            dataType: 'json',
+            beforeSend: function () {
+                $('#editer').hide();
+                $('#catalog-content').toggleClass('hidden');
+                $('#catalog-content').prepend('<div class="text-center loading"><img src="view/javascript/mmosolution/tree/image/loading_1.gif"/></div>');
+            },
+            complete: function () {
+                $('.loading').remove();
+            },
+            success: function (json) {
+                if (json['url']) {
+                    $('#catalog-content iframe').attr('src', json['url']);
+                }
+            }
+        });
+    }
+
+    function copy_delete_catalog(target, action, type) {
+        var r = confirm('{{ text_confirm }}');
+        if (r == true) {
+            $.ajax({
+                url: 'index.php?route=extension/module/editinline/copydeletecatalog&action=' + action + '&type=' + type,
+                type: 'post',
+                data: $('input[name*=\'selected\']:checked'),
+                dataType: 'json',
+                beforeSend: function () {
+                    target.html('<i class="fa fa-refresh fa-spin"></i>');
+                },
+                complete: function () {
+                    if (action == 'copy') {
+                        target.html('<i class="fa fa-copy"></i>');
+                    } else {
+                        target.html('<i class="fa fa-trash-o"></i>');
+                    }
+                },
+                success: function (json) {
+                    $('.alert-success').remove();
+                    $('.alert-danger').remove();
+                    if (json['success']) {
+                        $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                        load_product(current_category, false);
+                    }
+                    if (json['warning']) {
+                        $('#table-products').before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+                }
+            });
+        }
+    }
+
+    function copy_delete_category(target, action, category_id) {
+        var r = confirm('{{ text_confirm }}');
+        if (r == true) {
+            $.ajax({
+                url: 'index.php?route=extension/module/editinline/copydeletecatalog&action=' + action + '&type=category',
+                type: 'post',
+                data: 'category_id=' + category_id,
+                dataType: 'json',
+                beforeSend: function () {
+                    target.parent().parent().parent().parent().css("display", "none");
+                },
+                success: function (json) {
+                    $('.alert').remove();
+                    if (json['success']) {
+                       target.parent().parent().parent().parent().css("display", "none");
+                        $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+                    if (json['warning']) {
+                        target.parent().parent().parent().parent().css("display", "block");
+                        $('#table-products').before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+
+                }
+            });
+        }
+    }
+
+    function edit_beyond(type, product_id, name) {
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/beyondproduct',
+            type: 'post',
+            data: 'product_id=' + product_id + '&type=' + type + '&name=' + name,
+            dataType: 'json',
+            success: function (json) {
+                if (json['type'] == 'category') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    $('#beyond-product-content input[name=\'category\']').autocomplete({
+                        'source': function (request, response) {
+                            $.ajax({
+                                url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                                dataType: 'json',
+                                success: function (json) {
+                                    response($.map(json, function (item) {
+                                        return {
+                                            label: item['name'],
+                                            value: item['category_id']
+                                        }
+                                    }));
+                                }
+                            });
+                        },
+                        'select': function (item) {
+                            $('#beyond-product-content input[name=\'category\']').val('');
+                            $('#beyond-product-content #product-category' + item['value']).remove();
+                            $('#beyond-product-content #product-category').append('<div id="product-category' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_category[]" value="' + item['value'] + '" /></div>');
+                        }
+                    });
+                    $('#beyond-product-content #product-category').delegate('.fa-minus-circle', 'click', function () {
+                        $(this).parent().remove();
+                    });
+                } else if (json['type'] == 'special') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    special_row = json['special_row'];
+                    $('.date').datetimepicker({
+                        pickTime: false
+                    });
+                } else if (json['type'] == 'discount') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    discount_row = json['discount_row'];
+                    $('.date').datetimepicker({
+                        pickTime: false
+                    });
+                } else if (json['type'] == 'store') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+				} else if (json['type'] == 'seo_keyword') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');		
+                } else if (json['type'] == 'reward') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                } else if (json['type'] == 'image_addition') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    image_row = json['image_row'];
+                } else if (json['type'] == 'download') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    $('#beyond-product-content input[name=\'download\']').autocomplete({
+                        'source': function (request, response) {
+                            $.ajax({
+                                url: 'index.php?route=catalog/download/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                                dataType: 'json',
+                                success: function (json) {
+                                    response($.map(json, function (item) {
+                                        return {
+                                            label: item['name'],
+                                            value: item['download_id']
+                                        }
+                                    }));
+                                }
+                            });
+                        },
+                        'select': function (item) {
+                            $('#beyond-product-content input[name=\'download\']').val('');
+                            $('#beyond-product-content #product-download' + item['value']).remove();
+                            $('#beyond-product-content #product-download').append('<div id="product-download' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<button type="button" id="button-update-' + item['value'] + '" class="btn btn-warning btn-sm btn-upload" style="margin: 0 5px 0 15px;"><i class="fa fa-refresh"></i> {{ button_update_file }}</button><input type="hidden" name="product_download[]" value="' + item['value'] + '" /></div>');
+                        }
+                    });
+                    $('#beyond-product-content #product-download').delegate('.fa-minus-circle', 'click', function () {
+                        $(this).parent().remove();
+                    });
+                    
+                    $('#beyond-product-content #button-add-download').on('click', function () {
+                        $('#update-downlload').find('input').val('');
+                        $('#update-downlload input[name="download_id"]').val('0');
+                        $('#update-downlload .modal-title').text('Add New Download');
+                        $('#update-downlload #error-name-upload').text('');
+                        $('#update-downlload #error-filename').text('');
+                        $('#update-downlload #error-mask').text('');
+                        $('#update-downlload #upldate-success').text('');
+                        $('#update-downlload').modal('show');
+                    });
+                    $('#beyond-product-content #product-download').delegate('.btn-upload', 'click', function () {
+                        $('#update-downlload').find('input').val('');
+                        var download_id = $(this).attr('id').substring(14);
+                        $('#update-downlload input[name="download_id"]').val(download_id);
+                        $('#update-downlload .modal-title').text('Update Download #' + download_id);
+                        $('#update-downlload #error-name-upload').text('');
+                        $('#update-downlload #error-filename').text('');
+                        $('#update-downlload #error-mask').text('');
+                        $('#update-downlload #upldate-success').text('');
+                        $('#update-downlload').modal('show');
+                    });
+
+                    $('#update-downlload #mmos-button-upload').on('click', function() {
+             
+                        $('#form-upload').remove();
+
+                        $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+                        $('#form-upload input[name=\'file\']').trigger('click');
+
+                        if (typeof timer != 'undefined') {
+                        clearInterval(timer);
+                        }
+
+                        timer = setInterval(function() {
+
+                            if ($('#form-upload input[name=\'file\']').val() != '') {
+                                clearInterval(timer);		
+
+                                $.ajax({
+                                    url: 'index.php?route=catalog/download/upload&user_token={{ user_token }}',
+                                    type: 'post',		
+                                    dataType: 'json',
+                                    data: new FormData($('#form-upload')[0]),
+                                    cache: false,
+                                    contentType: false,
+                                    processData: false,		
+                                    beforeSend: function() {
+                                        $('#update-downlload #mmos-button-upload').button('loading');
+                                    },
+                                    complete: function() {
+                                        $('#update-downlload #mmos-button-upload').button('reset');
+                                    },	
+                                    success: function(json) {
+                                        $('#update-downlload #error-name-upload').text('');
+                                        $('#update-downlload #error-filename').text('');
+                                        $('#update-downlload #error-mask').text('');
+                                        $('#update-downlload #upldate-success').text('');
+                                        if (json['error']) {
+                                            alert(json['error']);
+                                        }
+                                        if (json['success']) {
+                                            $('#update-downlload input[name=\'filename\']').val(json['filename']);
+                                            $('#update-downlload input[name=\'mask\']').val(json['mask']);
+                                            $('#update-downlload input[name^=\'download_description[\']').val(json['mask']);
+                                        }
+                                    },			
+                                    error: function(xhr, ajaxOptions, thrownError) {
+                                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                    }
+                                });
+                            }
+                        }, 500);
+                    });
+
+                    $('#save-update-download').on('click', function () {
+                        $.ajax({
+                            url: 'index.php?route=extension/module/editinline/updatedownload&user_token={{ user_token }}',
+                            type: 'post',		
+                            dataType: 'json',
+                            data: $('#update-downlload input[type=\'text\'], #update-downlload input[type=\'hidden\']'),	
+                            success: function(json) {
+                                if(json['error']) {
+                                    if(json['error']['name']) {
+                                        $('#update-downlload #error-name-upload').text(json['error']['name']);
+                                    }
+                                    if(json['error']['filename']) {
+                                        $('#update-downlload #error-filename').text(json['error']['filename']);
+                                    }
+                                    if(json['error']['mask']) {
+                                        $('#update-downlload #error-mask').text(json['error']['mask']);
+                                    }
+                                }
+                                if(json['success']) {
+                                    if(json['info']) {
+                                        if(json['info']['existed'] == '1') {
+                                            $('#beyond-product-content #product-download' + json['info']['download_id']).html('<i class="fa fa-minus-circle"></i> ' + json['info']['name'] + '<input type="hidden" name="product_download[]" value="' + json['info']['download_id'] + '" /> <button type="button" id="button-update-' + json['info']['download_id'] + '" data-loading-text="Loading..." class="btn btn-warning btn-sm btn-upload" style="margin: 0 5px 0 15px;"><i class="fa fa-refresh"></i> {{ button_update_file }}</button>');
+                                        } else {
+                                            $('#beyond-product-content #product-download').append('<div id="product-download' + json['info']['download_id'] + '"><i class="fa fa-minus-circle"></i> ' + json['info']['name'] + '<input type="hidden" name="product_download[]" value="' + json['info']['download_id'] + '" /> <button type="button" id="button-update-' + json['info']['download_id'] + '" data-loading-text="Loading..." class="btn btn-warning btn-sm btn-upload" style="margin: 0 5px 0 15px;"><i class="fa fa-refresh"></i> {{ button_update_file }}</button></div>');
+                                        }
+                                        $('#update-downlload #upldate-success').text(json['success']);
+                                        setTimeout(function(){
+                                            $('#update-downlload').modal('hide');
+                                        }, 1500);
+                                    }
+                                }
+                            },			
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            }
+                        });
+                    });
+                } else if (json['type'] == 'meta_tag_description') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    $('#languagemetatagdescription a:first').tab('show');
+                } else if (json['type'] == 'meta_tag_keyword') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    $('#languagemetatagkeyword a:first').tab('show');
+                } else if (json['type'] == 'product_tag') {
+                    $('#beyond-product-content').html(json['html']);
+                    $('#modal-product input[name="product_id"]').val(json['product_id']);
+                    $('#modal-product input[name="name"]').val(json['name']);
+                    $('#modal-product input[name="type"]').val(json['type']);
+                    $('#modal-product').modal('show');
+                    $('#languageproducttag a:first').tab('show');
+                }
+            }
+        });
+    }
+
+    function addSpecial() {
+        html = '<tr id="special-row' + special_row + '">';
+        html += '  <td class="text-left"><select name="product_special[' + special_row + '][customer_group_id]" class="form-control">';
+                {% for customer_group in customer_groups %} 
+                html += '<option value="{{ customer_group.customer_group_id }}">{{ customer_group.name|e('html') }}</option>';
+                {% endfor %} 
+                html += '  </select></td>';
+        html += '  <td class="text-right"><input type="text" name="product_special[' + special_row + '][priority]" value="" placeholder="{{ entry_priority }}" class="form-control" /></td>';
+        html += '  <td class="text-right"><input type="text" name="product_special[' + special_row + '][price]" value="" placeholder="{{ entry_price }}" class="form-control" /></td>';
+        html += '  <td class="text-left" style="width: 20%;"><div class="input-group date"><input type="text" name="product_special[' + special_row + '][date_start]" value="" placeholder="{{ entry_date_start }}" data-date-format="YYYY-MM-DD" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span></div></td>';
+        html += '  <td class="text-left" style="width: 20%;"><div class="input-group date"><input type="text" name="product_special[' + special_row + '][date_end]" value="" placeholder="{{ entry_date_end }}" data-date-format="YYYY-MM-DD" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span></div></td>';
+        html += '  <td class="text-left"><button type="button" onclick="$(\'#special-row' + special_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+        $('#beyond-product-content #special tbody').append(html);
+        $('.date').datetimepicker({
+            pickTime: false
+        });
+        special_row++;
+    }
+
+    function addDiscount() {
+        html = '<tr id="discount-row' + discount_row + '">';
+        html += '  <td class="text-left"><select name="product_discount[' + discount_row + '][customer_group_id]" class="form-control">';
+                {% for customer_group in customer_groups %} 
+                html += '<option value="{{ customer_group.customer_group_id }}">{{ customer_group.name|e('html') }}</option>';
+                {% endfor %} 
+                html += '  </select></td>';
+        html += '  <td class="text-right"><input type="text" name="product_discount[' + discount_row + '][quantity]" value="" placeholder="{{ entry_quantity }}" class="form-control" /></td>';
+        html += '  <td class="text-right"><input type="text" name="product_discount[' + discount_row + '][priority]" value="" placeholder="{{ entry_priority }}" class="form-control" /></td>';
+        html += '  <td class="text-right"><input type="text" name="product_discount[' + discount_row + '][price]" value="" placeholder="{{ entry_price }}" class="form-control" /></td>';
+        html += '  <td class="text-left"><div class="input-group date"><input type="text" name="product_discount[' + discount_row + '][date_start]" value="" placeholder="{{ entry_date_start }}" data-date-format="YYYY-MM-DD" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span></div></td>';
+        html += '  <td class="text-left"><div class="input-group date"><input type="text" name="product_discount[' + discount_row + '][date_end]" value="" placeholder="{{ entry_date_end }}" data-date-format="YYYY-MM-DD" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span></div></td>';
+        html += '  <td class="text-left"><button type="button" onclick="$(\'#discount-row' + discount_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+        $('#beyond-product-content #discount tbody').append(html);
+        $('.date').datetimepicker({
+            pickTime: false
+        });
+        discount_row++;
+    }
+
+    function addImage() {
+        html = '<tr id="image-row' + image_row + '">';
+        html += '  <td class="text-left"><a href="" id="thumb-image' + image_row + '"data-toggle="inlineimage_addition" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="product_image[' + image_row + '][image]" value="" id="input-image' + image_row + '" /></td>';
+        html += '  <td class="text-right"><input type="text" name="product_image[' + image_row + '][sort_order]" value="" placeholder="{{ column_sort_order }}" class="form-control" /></td>';
+        html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + image_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+        $('#images tbody').append(html);
+        
+        target_id = 'input-image' + image_row;
+        target_thumb = 'thumb-image' + image_row;
+        $('#modal-image').remove();
+        $.ajax({
+            url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + target_id + '&thumb=' + target_thumb,
+            dataType: 'html',
+            beforeSend: function () {
+                $('#button-image i').replaceWith('<i class="fa fa-circle-o-notch fa-spin"></i>');
+                $('#button-image').prop('disabled', true);
+            },
+            complete: function () {
+                $('#button-image i').replaceWith('<i class="fa fa-pencil"></i>');
+                $('#button-image').prop('disabled', false);
+            },
+            success: function (html) {
+                $('body').append('<div id="modal-image" class="modal editinline_addition">' + html + '</div>');
+
+                $('#modal-image').modal('show');
+            }
+        });
+        
+        image_row++;
+    }
+
+    $('#save-beyond-product').on('click', function () {
+        
+        $('#beyond-product-content').find('.note-editable').each(function() {
+            var target_id = $(this).parent().parent().find('textarea').attr('id');
+            var editable_content = $(this).html();
+            $('#' + target_id).html(editable_content);
+        });
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/updateproduct',
+            type: 'post',
+            data: $('#modal-product input[name="product_id"], #modal-product input[name="type"], #modal-product input[name="name"], #beyond-product-content input[type="text"], #beyond-product-content input[type="checkbox"]:checked, #beyond-product-content input[type="hidden"], #beyond-product-content select, #beyond-product-content textarea'),
+            dataType: 'json',
+            beforeSend: function () {
+                $('#save-beyond-product').button('loading');
+            },
+            complete: function () {
+                $('#save-beyond-product').button('reset');
+            },
+            success: function (json) {
+                $('.alert').remove();
+                $('#modal-product').modal('hide');
+                if (json['success']) {
+                    $('.alert').remove();
+                    $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    load_product(current_category, false);
+                }
+                if (json['warning']) {
+                    $('#table-products').before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            }
+        });
+    });
+    function change_show_hide_column(target) {
+        if (target.is(':checked')) {
+            $('.' + target.attr('name')).stop().show('slow');
+            value = true;
+        } else {
+            $('.' + target.attr('name')).stop().hide('slow');
+            value = false;
+        }
+
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/setshowhide',
+            type: 'post',
+            data: 'key=' + target.attr('name') + '&value=' + value,
+            dataType: 'json',
+            success: function (json) {
+            }
+        });
+    }
+
+    function sort_order(target, column) {
+        var order = '';
+        if ($('input[name=\'order\']').val() == 'ASC') {
+            order = 'DESC';
+        } else {
+            order = 'ASC';
+        }
+
+        $('input[name=\'order\']').val(order);
+        if ($('input[name=\'sort\']').val() != column) {
+            $('input[name=\'sort\']').val(column);
+        }
+
+        $('.asc').removeClass('asc');
+        $('.desc').removeClass('desc');
+        target.attr('class', order.toLowerCase());
+        load_product(current_category, false);
+    }
+
+    $('#back-list').click(function () {
+        $('#catalog-content').toggleClass('hidden');
+        $('#catalog-content iframe').contents().find("body").html('');
+        $('#editer').show();
+    });
+ </script>
+
+<script type="text/javascript">
+    $('input[name=\'filter_name\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/module/editinline/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request) + '&filter_category_id=' + current_category,
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['name'],
+                            value: item['product_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            $('input[name=\'filter_name\']').val(item['label']);
+            $('#button-filter').focus();
+        }
+    });
+    $('input[name=\'filter_model\']').autocomplete({
+        'source': function (request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/module/editinline/autocomplete&user_token={{ user_token }}&filter_model=' + encodeURIComponent(request) + '&filter_category_id=' + current_category,
+                dataType: 'json',
+                success: function (json) {
+                    response($.map(json, function (item) {
+                        return {
+                            label: item['model'],
+                            value: item['product_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function (item) {
+            $('input[name=\'filter_model\']').val(item['label']);
+            $('#button-filter').focus();
+        }
+    });
+    $('#button-filter').on('click', function () {
+        $('input[name=\'page\']').val(1);
+        load_product(current_category, true);
+    });
+    $('#button-clear-filter').on('click', function () {
+
+        $('#filter-row td').find('input[type=text]').val('');
+        $('#filter-row td').find('select').val('*');
+        load_product(current_category, true);
+    });
+
+
+
+</script>
+
+<script type="text/javascript">
+    $(document).delegate('a[data-toggle=\'inlineimage\']', 'click', function (e) {
+        e.preventDefault();
+        $('.popover').popover('hide', function () {
+            $('.popover').remove();
+        });
+        var element = this;
+        $(element).popover({
+            html: true,
+            placement: 'right',
+            trigger: 'manual',
+            content: function () {
+                return '<button type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></button> <button type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>';
+            }
+        });
+        $(element).popover('show');
+        $('#button-image').on('click', function () {
+            $('#modal-image').remove();
+            $.ajax({
+                url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + $(element).parent().find('input').attr('id') + '&thumb=' + $(element).attr('id'),
+                dataType: 'html',
+                beforeSend: function () {
+                    $('#button-image i').replaceWith('<i class="fa fa-circle-o-notch fa-spin"></i>');
+                    $('#button-image').prop('disabled', true);
+                },
+                complete: function () {
+                    $('#button-image i').replaceWith('<i class="fa fa-pencil"></i>');
+                    $('#button-image').prop('disabled', false);
+                },
+                success: function (html) {
+                    $('body').append('<div id="modal-image" class="modal editinline">' + html + '</div>');
+                    $('#modal-image').modal('show');
+                }
+            });
+            $(element).popover('hide', function () {
+                $('.popover').remove();
+            });
+        });
+        $('#button-clear').on('click', function () {
+            $(element).find('img').attr('src', $(element).find('img').attr('data-placeholder'));
+            $(element).parent().find('input').attr('value', '');
+            $(element).popover('hide', function () {
+                $('.popover').remove();
+            });
+        });
+    });
+    $(document).delegate('a[data-toggle=\'inlineimage_addition\']', 'click', function (e) {
+        e.preventDefault();
+        $('.popover').popover('hide', function () {
+            $('.popover').remove();
+        });
+        var element = this;
+        $(element).popover({
+            html: true,
+            placement: 'right',
+            trigger: 'manual',
+            content: function () {
+                return '<button type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></button> <button type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>';
+            }
+        });
+        $(element).popover('show');
+        $('#button-image').on('click', function () {
+            $('#modal-image').remove();
+            $.ajax({
+                url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + $(element).parent().find('input').attr('id') + '&thumb=' + $(element).attr('id'),
+                dataType: 'html',
+                beforeSend: function () {
+                    $('#button-image i').replaceWith('<i class="fa fa-circle-o-notch fa-spin"></i>');
+                    $('#button-image').prop('disabled', true);
+                },
+                complete: function () {
+                    $('#button-image i').replaceWith('<i class="fa fa-pencil"></i>');
+                    $('#button-image').prop('disabled', false);
+                },
+                success: function (html) {
+                    $('body').append('<div id="modal-image" class="modal editinline_addition">' + html + '</div>');
+                    $('#modal-image').modal('show');
+                }
+            });
+            $(element).popover('hide', function () {
+                $('.popover').remove();
+            });
+        });
+        $('#button-clear').on('click', function () {
+            $(element).find('img').attr('src', $(element).find('img').attr('data-placeholder'));
+            $(element).parent().find('input').attr('value', '');
+            $(element).popover('hide', function () {
+                $('.popover').remove();
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var group = $("ul.vertical").sortable({
+            handle: 'i.fa-arrows',
+            onDrop: function ($item, container, _super) {
+                var $clonedItem = $('<li/>').css({height: 0});
+                $item.before($clonedItem);
+                $clonedItem.animate({'height': $item.height()});
+                var data = group.sortable("serialize").get();
+                var jsonString = JSON.stringify(data, null, ' ');
+                var level = false;
+                if ($item.parent().hasClass('vertical')) {
+                    level = true;
+                } else if (($item.parent().parent().parent().hasClass('vertical')) && ($item.find(' > ul > li').find(' > ul > li').find(' > ul > li').length == 0)) {
+                    level = true;
+                } else if (($item.parent().parent().parent().parent().parent().hasClass('vertical')) && (($item.find(' > ul > li').find(' > ul > li').length == 0))) {
+                    level = true;
+                } else if(($item.parent().parent().parent().parent().parent().parent().parent().hasClass('vertical')) && ($item.find(' > ul > li').length == 0)) {
+                    level = true;
+                }
+
+                $item.animate($clonedItem.position(), function () {
+                    $clonedItem.detach();
+                    if (level) {
+                        _super($item, container);
+                        $.ajax({
+                            url: 'index.php?route=extension/module/editinline/sortablecategory',
+                            type: 'post',
+                            data: 'category_id=' + $item.attr('data-rel') + '&parent_id=' + container.target.attr('data-parent') + '&sortables=' + jsonString,
+                            dataType: 'json',
+                            success: function (json) {
+
+                            }
+                        });
+                    } else {
+                        $('li[data-rel="' + $item.attr('data-rel') + '"]').remove();
+                        $.ajax({
+                            url: 'index.php?route=extension/module/editinline/categories',
+                            dataType: 'json',
+                            success: function (json) {
+                                $("ul.vertical").html(json['html']);
+                                $('body').removeClass('dragging');
+                                $('.vertical').find('li.parent').find(' > ul > li').hide();
+                                $('.vertical').find('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-down').removeClass('fa-chevron-circle-right');
+                                $('a[data-referent="' + current_category + '"]').parents('li.parent').find(' > ul > li').show();
+                                $('a[data-referent="' + current_category + '"]').parents('li.parent').find('span').find('i.expan').addClass('fa-chevron-circle-right').removeClass('fa-chevron-circle-down');
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        var tablegroup = $('.sorted_table').sortable({
+            containerSelector: 'table',
+            itemPath: '> tbody',
+            itemSelector: 'tr',
+            placeholder: '<tr class="placeholder"/>',
+            handle: 'td.column_drag_drop',
+            onDrop: function ($item, container, _super) {
+
+                if (current_category == '-1') {
+                    $('.alert-danger').remove();
+                    $('#table-products').before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ text_cant_sort }}<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                } else {
+                    $sort_url = '&product_id=' + $item.attr('data-product') + '&sort_order=' + $item.index() + '&category_id=' + current_category;
+                    $.ajax({
+                        url: 'index.php?route=extension/module/editinline/sortableproduct' + $sort_url,
+                        type: 'get',
+                        dataType: 'json',
+                        success: function (json) {
+                            load_product(current_category, false);
+                        }
+                    });
+                }
+                _super($item, container);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    var catalog_left = $('.catalog-left');
+    var catalog_right = $('.catalog-right');
+    function change_show_hide_tree(target) {
+        var width_editer = $('#editer').width();
+        var data_key_right = catalog_right.attr('data-key');
+
+        if (catalog_left.css('display') == 'none') {
+            catalog_left.stop().show();
+            $('#showcategory_revert').addClass('hidden');
+            if (data_key_right == undefined) {
+                $('.catalog-right').css({'width': '75%'});
+            } else {
+                $('.catalog-right').css('width', data_key_right);
+            }
+            catalog_right.children().children('#drag').css('display', 'block');
+            attribute = 1;
+
+        } else {
+            catalog_left.stop().hide();
+            $('#showcategory_revert').removeClass('hidden');
+            catalog_right.css('width', width_editer);
+            catalog_right.children().children('#drag').css('display', 'none');
+
+            attribute = 0;
+        }
+        $('.table-width1').width($('#table-products').width());
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/setshowhidetree',
+            type: 'post',
+            data: 'attribute=' + attribute,
+            dataType: 'json',
+            success: function (json) {
+            }
+        });
+    }
+    var isResizing = false,
+            lastDownX = 0;
+
+    $(function () {
+        if (catalog_left.css('display') == 'none') {
+            var width_editer = $('#editer').width();
+            catalog_right.css('width', width_editer);
+            catalog_right.children().children('#drag').css('display', 'none');
+        }
+        if ($('#column-left').hasClass('active') && catalog_left.css('display') == 'none') {
+            catalog_right.css('width', $('#editer').width() - 200);
+        }
+        function width_edit_menu() {
+            if ($('#column-left').attr('class') == '' && catalog_left.css('display') == 'none') {
+                catalog_right.css('width', $('#editer').width() + 150);
+            } else if ($('#column-left').attr('class') == '' && catalog_left.css('display') == 'block') {
+                catalog_right.css('width', $('#editer').width() + 185 - catalog_left.outerWidth() - 50);
+                if (catalog_right.attr('data-key') != undefined) {
+                    $('.catalog-right').css('width', catalog_right.attr('data-key'));
+                }
+            } else if ($('#column-left').hasClass('active') && catalog_left.css('display') == 'block') {
+                catalog_right.css('width', $('#editer').width() - 185 - catalog_left.outerWidth() + 50);
+                if (catalog_right.attr('data-key') != undefined) {
+                    $('.catalog-right').css('width', catalog_right.attr('data-key'));
+                }
+            } else {
+                catalog_right.css('width', $('#editer').width() - 200);
+            }
+            $('.table-width1').width($('#table-products').width());
+        }
+        $("#button-menu").on("click", width_edit_menu);
+        var container = $('#editer .drag-content'),
+                left = $('.catalog-left'),
+                right = $('.catalog-right'),
+                handle = $('#drag');
+        handle.on('mousedown', function (e) {
+            isResizing = true;
+            lastDownX = e.clientX;
+        });
+        $(document).on('mousemove', function (e) {
+            // we don't want to do anything if we aren't resizing.
+            if (!isResizing)
+                return;
+            var offsetRight = container.width() - (e.clientX - container.offset().left);
+            right.attr('data-key', offsetRight);
+            left.css('right', offsetRight);
+            right.css('width', offsetRight);
+        }).on('mouseup', function (e) {
+            // stop resizing
+            isResizing = false;
+            /*
+             $.ajax({
+             url: 'index.php?route=extension/module/editinline/setshowhide',
+             type: 'post',
+             data: 'left=' + $('.catalog-left').width() + '&right=' + $('.catalog-right').width() +'&column=1',
+             dataType: 'json',
+             success: function (json) {
+             }
+             }); */
+
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    $('.all-status-change').on('click', function () {
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/allstatuschange&type=' + $(this).attr('data-type'),
+            type: 'post',
+            data: $('input[name*=\'selected\']:checked'),
+            dataType: 'json',
+            beforeSend: function () {
+
+            },
+            complete: function () {
+
+            },
+            success: function (json) {
+                $('.alert-success').remove();
+                $('.alert-danger').remove();
+                $('#mastercheckall').prop('checked', false);
+                if (json['success']) {
+                    $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    load_product(current_category, false);
+                }
+                if (json['warning']) {
+                    $('#table-products').before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            }
+        });
+    });
+</script>
+<script  type="text/javascript" >
+    $(function () {
+
+        $('#filter-row input, filter-row select').keypress(function (e) {
+            if (e.which == 13) {
+                $('#button-filter').trigger('click');
+            }
+        });
+
+        $(document).on('keydown', 'div.cellEditing input, div.cellEditing select', function (e) {
+            e.stopPropagation();
+            if ($(this).is(":focus")) {
+                if (e.which == 13 || (e.which == 13 && e.ctrlKey)) {
+                    $(this).parents().find('div.btn-group button.mmossave').trigger('click');
+                } else if (e.which == 27) {
+                    $(this).parents().find('div.btn-group button.mmoscancel').trigger('click');
+                }
+            }
+        });
+        $(document).on('change', 'div.cellEditing select', function (e) {
+            $(this).parents().find('div.btn-group button.mmossave').trigger('click');
+        });
+
+
+        $('#dropdown-filter').on('click', function () {
+            if ($(this).children().hasClass("fa-spin")) {
+                $(this).children().removeClass("fa-spin");
+            } else {
+                $(this).children().addClass("fa-spin");
+            }
+        });
+        if ($('#column-left').hasClass('active')) {
+            $('.table-width1').width($('#table-products').width());
+        }
+        
+    });
+</script>
+<script type="text/javascript">
+    $('input[name="nametemplate"]').on('keydown', function(e) {
+		if (e.keyCode == 13) {
+			$('input[name="nametemplate"]').parent().find('#save_template_show_hide').trigger('click');
+		}
+	});
+    $('#save_template_show_hide').on('click', function () {
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/savetemplateShowHide&user_token={{ user_token }}',
+            type: 'post',
+            data: $('input[name="nametemplate"]'),
+            dataType: 'json',
+            beforeSend: function () {
+            },
+            success: function (json) {
+                $('.alert').remove();
+                if (json['success']) {
+                    $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $.ajax({
+                        url: 'index.php?route=extension/module/editinline/gettemplateshowhide&user_token={{ user_token }}',
+                        type: 'post',
+                        data: '',
+                        dataType: 'json',
+                        success: function (json) {
+                            if (json['html']) {
+                                 $('#config-choose-template ul').html(json['html']);
+                            }
+                        }
+                    });                                                 
+                } else {
+                    $('#table-products').before('<div class="alert alert-warning"><i class="fa fa-warning" aria-hidden"true"=""></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            }
+        });
+    });
+    $('#choose-template').on('change', function (e) {
+        e.preventDefault();
+        if($(this).val() != '0'){
+             location =  'index.php?route=extension/module/editinline&user_token={{ user_token }}&template=' + $(this).val();
+        }
+       
+    });
+    $('#open-choose-template').click(function () {
+        if ($(this).siblings("#config-choose-template").hasClass('active')) {
+            $(this).siblings("#config-choose-template").removeClass('active');
+        } else {
+            $(this).siblings("#config-choose-template").addClass('active');
+        }
+    });
+    function delete_template(target,template_id){
+          $.ajax({
+            url: 'index.php?route=extension/module/editinline/deletetemplate&user_token={{ user_token }}',
+            type: 'post',
+            data: 'template_id=' + template_id,
+            dataType: 'json',
+            beforeSend: function () {
+                $(target).parent('li').remove();
+            },
+            success: function (json) {
+                $('.alert').remove();
+                if (json['success']) {
+                    $('#table-products').before('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function bulkproduct(type) {
+        var html = '';
+        if(type == 'name') {
+            html += '<div class="form-group">';
+            {% for language in languages %} 
+                html += "<div class='input-group'><span class='input-group-addon'><img src='language/{{ language.code }}/{{ language.code }}.png' title='{{ language.name }}'/></span><input type='text' name='value[{{ language.language_id }}]' value='{" + type +  "}' class='form-control'/></div>";
+            {% endfor %} 
+            html += "</div>";
+        } else if(type == 'model' || type == 'seo_keyword' || type == 'location') {
+            html += '<div class="form-group">';
+            html += "<input type='text' name='value' value='{" + type +  "}' class='form-control'/>";
+            html += "</div>";
+		} else if(type == 'quantity' || type == 'price' || type == 'sort_order' || type == 'minimum' || type == 'points' || type == 'weight' || type == 'length' || type == 'width' || type == 'height') {
+            html += '<div class="form-group">';
+            html += "<select name='operator' class='form-control'>";
+            html += "<option value='='>=</option>";
+            html += "<option value='+'>+</option>";
+            html += "<option value='-'>-</option>";
+            html += "<option value='*'>*</option>";
+            html += "<option value='/'>/</option>";
+            html += "</select><br/>";
+            html += "<input type='text' name='value' value='' class='form-control'/><br/>";
+            html += "<select name='calc' class='form-control'>";
+            html += "<option value='F'>{{ text_fixed_amount }}</option>";
+            html += "<option value='P'>{{ text_percentage }}</option>";
+            html += "</select>";
+            html += "</div>";
+        }
+        $('.alert-success').remove();
+        $('.alert-danger').remove();
+        $('#bulk-product input[name="type"]').val(type);
+        $('#bulk-product-content').html(html);
+        if($('input[name*=\'selected\']:checked').length == '0') {
+            $('#bulk-product #save-bulk-product').prop('disabled', true);
+        } else {
+            $('#bulk-product #save-bulk-product').prop('disabled', false);
+        }
+        $('#bulk-product').modal('show');
+    }
+    
+    $('#save-bulk-product').on('click', function() {
+        $.ajax({
+            url: 'index.php?route=extension/module/editinline/bulkproduct',
+            type: 'post',
+            data: $('input[name*=\'selected\']:checked, #bulk-product input[type="text"], #bulk-product input[type="hidden"],#bulk-product select'),
+            dataType: 'json',
+            beforeSend: function () {
+                $('#save-bulk-product').button('loading');
+            },
+            complete: function () {
+                $('#save-bulk-product').button('reset');
+            },
+            success: function (json) {
+                $('.alert-success').remove();
+                $('.alert-danger').remove();
+                if (json['success']) {
+                    $('#bulk-product .modal-footer').prepend('<div class="alert alert-success text-center"><i class="fa fa-exclamation-circle"></i> ' + json['success'] + '</div>');
+                    setTimeout(function() {
+                        $('#bulk-product').modal('hide');
+                        load_product(current_category, false);
+                    },1000);  
+                }
+                if (json['warning']) {
+                    $('#bulk-product .modal-footer').prepend('<div class="alert alert-danger text-center"><i class="fa fa-exclamation-circle"></i> ' + json['warning'] + '</div>');
+                }
+            }
+        });
+    });
+    
+    $('#bulk-product').on('hidden.bs.modal', function(){
+        $(this).data('modal', null);
+    });
+</script>
+
+{{ footer }}

@@ -1,0 +1,114 @@
+<link href="catalog/view/theme/default/stylesheet/tmdphotogallery.css" rel="stylesheet"/>
+<h3 class="mainhead">{{ heading_title }}</h3>
+<div class="pull-right viewall">
+	<a href="index.php?route=extension/gallery">{{ text_viewall }}</a>
+</div>
+<div class="gallernew">
+<div id="" class="row">
+	<div class="product-layout">
+		<div class="gallery_row">
+		{% if carousel==1 %}
+          <div class="galle owl-carousel">
+			{% if gallerys %}
+        {% for gallery in gallerys %}
+				{% if select_galleryalbums %}
+					<div class="col-sm-12 col-md-12 col-lg-12 col-xs-12">
+				<div class="gallary showalbumonly">
+				  {% if gallery.image %}
+						<div class="gallary gallary-inner">
+							<div class="images magnificPopup">
+								<img class="img-responsive" src="{{ gallery.image }}"/>
+								<a class="thumbnail" id="{{ gallery.album_id }}" href="{{ gallery.popup }}"  style="text-align:center">
+									<div class="texthover"><span class="namephoto">{{ gallery.album }}</span>
+									</div>
+								</a>
+							</div>
+							{% for multiples_image in images  %}
+							<div class="image  magnificPopup{{ gallery.album_id }} hide">
+								<a class="thumbnail" href="{{ multiples_image.popup }}"></a>
+							</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+					</div>
+					</div>
+
+				 {% else %}
+				  {% if gallery.album %}
+					<div class="col-sm-12 col-md-12 col-lg-12 col-xs-12">
+					 <div class="gallary">
+						<div class="images">
+							<a href="{{ gallery.href }}">
+							{% if gallery.image %}
+							<img class="img-responsive" src="{{ gallery.image }}"/>
+							{% endif %}
+								</a>
+							<div class="texthover" onclick="top.location.href='{{ gallery.href }}'">
+									<a class="name" href="{{ gallery.href }}"><span>{{ gallery.album }}</span></a>
+									<span class="description"><p>{{ gallery.description }}</p></span>
+									<p class="totalphoto">{{ gallery.totalphoto }} Photos</p>
+								</div>
+							</div>
+						</div>
+						</div>
+					{% endif %}
+				{% endif %}
+
+			  {% endfor %}
+			 {% endif %}
+			</div>
+		{% else %}
+
+		<div class="galle homegallery">
+          {% if gallerys %}
+			{% for gallery in gallerys %}
+				<div class=" col-sm-3 col-md-3 col-lg-3 col-xs-12">
+					<div class="gallary ">
+						<div class="images">
+				   <a href="{{ gallery.href }}">
+				  {% if gallery.image %}
+								<img class="img-responsive" src="{{ gallery.image }}"/>
+					 			{% endif %}
+							</a>
+
+						<div class="texthover" onclick="top.location.href='{{ gallery.href }}'">
+								<a class="name" href="{{ gallery.href }}"><span>{{ gallery.album }}</span></a>
+								<span class="description"><p>{{ gallery.description }}</p></span>
+								<p class="totalphoto">{{ gallery.totalphoto }} {{ text_photos }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+				{% endif %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+  </div></div>
+{% if carousel==1 %}
+<script type="text/javascript"><!--
+$('.galle').owlCarousel({
+	items: 4,
+	autoPlay: false,
+	navigation: true,
+	navigationText: ['<i class="fa fa-chevron-left fa-5x"></i>', '<i class="fa fa-chevron-right fa-5x"></i>'],
+	pagination: false,
+	margin: 0,
+	autoheight:true
+});
+
+$('document').ready(function() {
+
+	$('.magnificPopup').magnificPopup({
+		type:'image',
+		delegate: 'a',
+		gallery: {
+			enabled:true
+		}
+	});
+
+});
+
+--></script>
+{% endif %}

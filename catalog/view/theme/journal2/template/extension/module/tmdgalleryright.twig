@@ -1,0 +1,21 @@
+<div class="rightgallery">
+  <div id="gallery-layout3" class="xs-100 sm-100 md-100 lg-100 xl-100">
+    {% if gallerys %}
+     {% for gallery in gallerys %}
+       <div class="product-layout product-grid-item xs-100 sm-33 md-33 lg-33 xl-33 display-both block-button">
+         <div class="main-gallary">
+			<div class="gallery-left">
+			  <a href="{{ gallery.href }}">{% if gallery.image %}<img src="{{ gallery.image }}">{% endif %}</a>
+			 </div>
+			 <div class="gallery-right">
+				<h3><a class="name" href="{{ gallery.href }}">{{ gallery.album }}</a></h3>
+				<h3> {{ gallery.totalphoto }} {{ text_photos }}</h3>
+                <h3> {{ gallery.totalview }}</h3>
+			  </div>
+			  <div class="clearfix"> </div>
+           </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+     </div>
+</div>

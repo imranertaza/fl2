@@ -1,0 +1,99 @@
+{{ header }}
+<div class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>  
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+<div id="content" class="{{ class }}">{{ content_top }}
+
+    <div id="gallery-layout3" class="row">
+		  <div class="gallery-layoutmain">
+			{% if gallerys %}
+				{% for  gallery in gallerys %}
+					{% if gallery.thumb %}	
+					<div class="col-sm-4 col-md-4 col-xs-12">
+						<div class="main-gallary">
+							<div class="gallery-left">
+							<a href="{{ gallery.href }}"><img src="{{ gallery.thumb }}"></a>
+							</div>
+							<div class="gallery-right">
+							    <h3><a href="{{ gallery.href }}"> {{ gallery.name }} </a></h3> <b>{{ gallery.totalphoto}} {{ text_photos }}</b>
+								 <p>{{ gallery.description }}</p>
+							</div>
+							<div class="clearfix"> </div>
+						</div>
+						<div class="clearfix"> </div>
+					</div>	
+					{% endif %}
+				{% endfor %} 
+			{% endif %}
+		  </div>		
+		</div>
+
+
+    
+		<div id="gallery" class="photopage">
+			<div class="photo photo-inner">
+				<h1 class="name">{{ album_name }}</h1>
+				<div class="description"><p>{{ album_description }}</p></div>
+			{% if images %}
+			 {% for image in images %}
+              {% if image.images %}
+					<div class="col-sm-4 col-md-4 col-lg-4 col-xs-12">
+						<div class="gallary gallary-inner">
+							<div class="images magnificPopup">								
+							<img class="img-responsive" src="{{ image.images }}" />
+							<a class="thumbnail" id="{{ image.album_photos_id }}" href="{{ image.popup }}"  style="text-align:center">	
+								<div class="texthover">			<span class="namephoto">{{ image.name }}</span>
+								</div>
+							</a>
+							</div>
+
+					  
+						{% for multiples_image in images  %}
+							<div class="image  magnificPopup{{ image.album_photos_id }} hide">
+								<a class="thumbnail" href="{{ multiples_image.popup }}"></a>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+			</div>	
+			{{ content_bottom }}				
+		</div>
+	</div>	
+	{{ column_right }}</div>
+	<div class="row">
+        <div class="col-sm-6 text-left">{{ pagination }}</div>
+        <div class="col-sm-6 text-right">{{ results }}</div>
+    </div>
+</div>
+{{ footer }}
+<script type="text/javascript">
+$('document').ready(function() {
+	
+	$('.magnificPopup').magnificPopup({
+		type:'image',
+		delegate: 'a',
+		gallery: {
+			enabled:true
+		}
+	});
+	
+});
+</script> 
+<style>
+#cboxTitle{position:absolute; bottom:0; left:0; text-align:center; width:100%; font-weight:bold; color:#7C7C7C;}
+</style>
+

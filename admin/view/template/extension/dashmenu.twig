@@ -1,0 +1,24 @@
+<link type="text/css" href="view/stylesheet/gallery.css" rel="stylesheet" media="screen" />
+<ul id="dashmenu" class="list-inline">
+			<li class="yellow {% if dashboard_menu==1 %} active {% endif %}"><a href="{{ dashboard }}"><i class="fa fa-dashboard"></i> 
+			<div>{{ text_dash }}</div></a></li>
+			<li class="blue{% if setting_menu==1 %} active {% endif %}"><a href="{{ gallerysetting }}"><i class="fa fa-cogs"></i> 
+			<div>{{ text_sett }}</div></a></li>
+			<li class="orange{% if photo_menu==1 %} active {% endif %}"><a  href="{{ galleryphoto }}"><i class="fa fa-camera"></i>
+			<div>{{ text_photo }}</div></a></li>
+			<li class="green{% if gallery_menu==1 %} active {% endif %}"><a href="{{ gallery }}"><i class="fa fa-picture-o"></i> 
+			<div>{{ text_gallery }}</div></a></li>
+			<li class="darkpink{% if module_menu==1 %} active {% endif %}"><a href="{{ addmodule }}"><i class="fa fa-puzzle-piece"></i> 
+			<div>{{ text_addmodule }}</div></a></li>
+			<li class="pink{% if about_menu==1 %} active {% endif %}"><a href="{{ about }}"><i class="fa fa-user"></i> 
+			<div>{{ text_about }}</div></a></li>
+		</ul>
+<script>
+$("#dashmenu").on('click','li',function(){
+    $("#dashmenu li.active").removeClass("active"); 
+    $(this).addClass("active"); 
+});
+</script>
+
+
+

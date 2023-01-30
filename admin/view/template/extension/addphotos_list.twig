@@ -1,0 +1,142 @@
+<link type="text/css" href="view/stylesheet/gallery.css" rel="stylesheet" media="screen" />
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="container-fluid">
+	
+	<div class="row">
+	<div class="logopart">
+      <div class="col-lg-3 col-md-3 col-sm-3">
+		 <h1>{{ heading_title }}</h1>
+	  </div>
+      <div class="col-lg-9 col-md-9 col-sm-9">
+		{{ dashmenu }}
+	  </div>
+    </div>
+    </div>
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+  {% if success %}
+    <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+	<div class="page-header">
+     <div class="container-fluid">
+      <div class="pull-right">
+				<a href="{{ insert }}" data-toggle="tooltip" title="{{ button_insert }}" class="btn btn-primary"><i class="fa fa-plus"></i></a> 
+        <button type="button" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-addphotos').submit() : false;"><i class="fa fa-trash-o"></i></button>
+      </div>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+   <div class="panel panel-default">
+	   <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+    <div class="panel-body">
+		<div class="well">
+          <div class="row">
+		    <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-albumname">{{ entry_albumname }}</label>
+                <select name="filter_albumname" id="input-albumname" class="form-control">
+                  <option value=""></option>
+					{% for album in albums %}
+						{% if filter_albumname == album.album_id %}
+						<option value="{{ album.album_id }}>" selected="selected">{{ album.name }}</option>
+						{% else %}
+						<option value="{{ album.album_id }}">{{ album.name }}</option>
+						{% endif %}
+						{% endfor %}
+                </select>
+              </div>
+              <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> {{ button_filter }}</button>
+            </div>
+		  
+		  </div>
+		</div>
+      <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-addphotos">
+		<div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td width="1" class="text-center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+              <td class="text-left">Image</td>
+              <td class="text-left">{% if sort == 'name' %}
+                <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
+                {% else %}
+                <a href="{{ sort_name }}">{{ column_name }}</a>
+                {% endif %}</td>
+				
+				 <td class="text-left">{% if sort == 'title' %}
+                <a href="{{ sort_title }}" class="{{ order|lower }}">{{ column_title }}</a>
+                {% else %}
+                <a href="{{ sort_title }}">{{ column_title }}</a>
+                {% endif %}</td>
+			
+				
+				<td class="text-right">{% if sort == 'sort_order' %}
+                <a href="{{ sort_sort_order }}" class="{{ order|lower }}">{{ column_sort_order }}</a>
+                {% else %}
+                <a href="{{ sort_sort_order }}">{{ column_sort_order }}</a>
+                {% endif %}</td>
+				
+              <td class="text-right">{{ column_action }}</td>
+            </tr>
+          </thead>	
+          <tbody>
+            {% if addphotoss %}
+            {% for addphotos in addphotoss %}
+			
+            <tr>
+			  <td style="text-align: center;">{% if addphotos.selected %}
+                <input type="checkbox" name="selected[]" value="{{ addphotos.album_photos_id }}" checked="checked" />
+                {% else %}
+                <input type="checkbox" name="selected[]" value="{{ addphotos.album_photos_id }}" />
+                {% endif %}</td>
+			  <td class="text-left"><img style="padding: 1px; border: 1px solid #DDDDDD;" src="{{ addphotos.image }}"></td>
+              <td class="text-left">{{ addphotos.name }}</td>
+			  <td class="text-left">{{ addphotos.adname }}</td>
+              <td class="text-right">{{ addphotos.sort_order }}</td>
+              <td class="text-right"><a href="{{ addphotos.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td class="text-center" colspan="6">{{ text_no_results }}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+		</div>
+      </form>
+		<div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+		</div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript"><!--
+$('#button-filter').on('click', function() {
+	var url = 'index.php?route=extension/addphotos&user_token={{ user_token }}';
+	
+	
+	var filter_albumname = $('select[name=\'filter_albumname\']').val();
+
+	if (filter_albumname != '') {
+		url += '&filter_albumname=' + encodeURIComponent(filter_albumname);
+	}
+
+	location = url;
+});
+//--></script> 
+{{ footer }}

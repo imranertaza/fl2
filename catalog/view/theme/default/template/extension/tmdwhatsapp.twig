@@ -1,0 +1,203 @@
+<link href="catalog/view/theme/default/stylesheet/tmdwhatsapp.css" rel="stylesheet">
+{% if (deallayout == 'layout1') %}
+<div id="whatsopenbox" class="hide">
+  <div class="title">
+    <p>{{ whatsapp_heading }}</p>
+    <div class="close"><i class="fa fa-times" aria-hidden="true"></i></div>
+  </div>
+  <div class="chatbox">
+    <p>{{ whatsapp_description }}</p>
+        {% for whatsapp_setting in whatsapp_settings %}
+        {% if (whatsapp_setting['online_status'] != 'hide') %}
+        {% if (whatsapp_setting['online_status'] == 'online') %}
+          <div class="mainbox" style="background:{{ whatsapp_setting.bgcolor }}">
+            <a  target="_new" href="https://api.whatsapp.com/send?phone={{ whatsapp_setting['whatsapp_number'] }}&text={{ whatsapp_setting['greeting_message'] }}" >
+              <div class="image">
+                {% if (button_layout == 2) %}<div class="diamond">{% endif %}
+                  <img src="{{ whatsapp_setting.profile_image }}" alt="" title="{{ whatsapp_setting.profile_image }}" class="{% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 0) %} round {% endif %} img-responsive"/>
+                {% if (button_layout == 2) %}</div>{% endif %}
+                  <div class="status online"><i class="fa fa-circle" aria-hidden="true" style="color:{{ whatsapp_setting.statuscolor }}"></i></div>
+              </div>
+              <div class="msg-detail">
+                 <span class="name" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['profile_name'] }}</span>
+                     <span class="msg" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['title'] }}</span>
+               </div>
+                 </a>
+           </div>
+
+          {% else %}
+            <div class="mainbox" style="background:{{ whatsapp_setting.bgcolor }}">
+              <div class="image">
+                {% if (button_layout == 2) %}<div class="diamond">{% endif %}
+                  <img src="{{ whatsapp_setting.profile_image }}" alt="" title="{{ whatsapp_setting.profile_image }}" class="{% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 0) %} round {% endif %} img-responsive"/>
+                {% if (button_layout == 2) %}</div>{% endif %}
+                  <div class="status offline"><i class="fa fa-circle" aria-hidden="true" style="color:{{ whatsapp_setting.statuscolor }}"></i></div>
+              </div>
+              <div class="msg-detail" >
+                    <span class="name" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['profile_name'] }}</span>
+                    <span class="msg" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['title'] }}</span>
+              </div>
+          </div>
+           {% endif %}
+          {% endif %}
+       {% endfor %}
+    </div>
+</div>
+{% if (whatsapp_status == 1) %}
+<div class="whatsapp-box {% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 2) %} diamond {% else %} round {% endif %} ">
+  <i class="fa fa-whatsapp"></i> {% if (button_layout == 1) %}<span>{{ heading_title }}</span>{% endif %}
+</div>
+{% endif %}
+{% elseif (deallayout == 'layout2') %}
+{% if (whatsapp_status == 1) %}
+<div class="whatsapp-btn {% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 2) %} diamond {% else %} round{% endif %}">
+    <div class="whatsapp-btn-icon">
+      <i class="fa fa-whatsapp"></i>
+      <i class="fa fa-times closebtn"></i>
+    </div>
+</div>
+{% endif %}
+
+<div class="whatsapp-detail-box">
+   <div class="top-heading">
+        <div class="start-heading">{{ whatsapp_heading }}</div>
+        <div class="intro">{{ whatsapp_description }}</div>
+    </div>
+
+    <div class="whatsapp-mainbox" style="background:url('{{ whatsappimage }}'); background-repeat:no-repeat;background-position:right top;">
+        <div class="whatsapp-mainbox_list">
+          {% for whatsapp_setting in whatsapp_settings %}
+            {% if (whatsapp_setting['online_status'] != 'hide') %}
+              {% if (whatsapp_setting['online_status'] == 'online') %}
+              <div class="whatsapp-mainbox_item online" style="border-left:5px solid {{ whatsapp_setting.bgcolor }};">
+               <a  target="_new" href="https://api.whatsapp.com/send?phone={{ whatsapp_setting.whatsapp_number }}&text={{ whatsapp_setting.greeting_message }}">
+                  <div class="image">
+                    {% if (button_layout == 2) %}<div class="diamond">{% endif %}
+                      <img src="{{ whatsapp_setting.profile_image }}" alt="" title="{{ whatsapp_setting.profile_image }}" class="{% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 0) %} round {% endif %} img-responsive"/>
+                    {% if (button_layout == 2) %}</div>{% endif %}
+                      <div class="status online"><i class="fa fa-whatsapp" aria-hidden="true" style="color:{{ whatsapp_setting.statuscolor }}"></i></div>
+                  </div>
+                  <div class="people-detail">
+                       <div class="name" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['profile_name'] }}</div>
+                       <div class="designation" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['title'] }}</div>
+                  </div>
+              </a>
+            </div>
+                {% else %}
+                <div class="whatsapp-mainbox_item offline" style="border-left:5px solid {{ whatsapp_setting.bgcolor }};">
+                    <div class="image">
+                      {% if (button_layout == 2) %}<div class="diamond">{% endif %}
+                        <img src="{{ whatsapp_setting.profile_image }}" alt="" title="{{ whatsapp_setting.profile_image }}" class="{% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 0) %} round {% endif %} img-responsive"/>
+                      {% if (button_layout == 2) %}</div>{% endif %}
+                        <div class="status offline"><i class="fa fa-circle" aria-hidden="true" style="color:{{ whatsapp_setting.statuscolor }}"></i></div>
+                    </div>
+                    <div class="people-detail">
+                         <div class="name" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['profile_name'] }}</div>
+                         <div class="designation" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['title'] }}</div>
+                    </div>
+               </div>
+              {% endif %}
+                {% endif %}
+             {% endfor %}
+        </div>
+    </div>
+</div>
+{% elseif (deallayout == 'layout3') %}
+    {% if (whatsapp_status == 1) %}
+    <div class="whatsapp-btn {% if (button_layout == 1) %}boxsquare {% elseif (button_layout == 2) %} diamond {% else %} round{% endif %}">
+        <div class="whatsapp-btn-icon">{% if (button_layout == 1) %}<span class="square-txt">{{ text_helpu }}</span>{% endif %}<i class="fa fa-whatsapp"></i><i class="fa fa-times closebtn"></i></div>
+    </div>
+    {% endif %}
+
+    <div class="whatsapp-detail-box layout3">
+       <div class="top-heading">
+            <div class="start-heading">{{ whatsapp_heading }}</div>
+            <div class="intro">{{ whatsapp_description }}</div>
+        </div>
+
+        <div class="whatsapp-mainbox" style="background:url('{{ whatsappimage }}'); background-repeat:no-repeat;background-position:right top;">
+            <div class="whatsapp-mainbox_list">
+              {% for whatsapp_setting in whatsapp_settings %}
+                {% if (whatsapp_setting['online_status'] != 'hide') %}
+                  {% if (whatsapp_setting['online_status'] == 'online') %}
+                  <div class="whatsapp-mainbox_item online" style="border:3px dashed {{ whatsapp_setting.bgcolor }};">
+                   <a  target="_new" href="https://api.whatsapp.com/send?phone={{ whatsapp_setting.whatsapp_number }}&text={{ whatsapp_setting.greeting_message }}">
+                      <div class="image">
+                        {% if (button_layout == 2) %}<div class="diamond">{% endif %}
+                          <img src="{{ whatsapp_setting.profile_image }}" alt="" title="{{ whatsapp_setting.profile_image }}" class="{% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 0) %} round {% endif %} img-responsive"/>
+                        {% if (button_layout == 2) %}</div>{% endif %}
+                      </div>
+                      <div class="people-detail">
+                           <div class="name" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['profile_name'] }}</div>
+                           <div class="designation" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['title'] }}</div>
+                           <div class="status"><span style="color:{{ whatsapp_setting.frontcolor }}">online</span> <i class="fa fa-whatsapp" aria-hidden="true" style="color:{{ whatsapp_setting.statuscolor }}"></i></div>
+                      </div>
+                  </a>
+                </div>
+                    {% else %}
+                    <div class="whatsapp-mainbox_item offline" style="border:3px dashed {{ whatsapp_setting.bgcolor }};">
+                        <div class="image">
+                          {% if (button_layout == 2) %}<div class="diamond">{% endif %}
+                            <img src="{{ whatsapp_setting.profile_image }}" alt="" title="{{ whatsapp_setting.profile_image }}" class="{% if (button_layout == 1) %} boxsquare {% elseif (button_layout == 0) %} round {% endif %} img-responsive"/>
+                          {% if (button_layout == 2) %}</div>{% endif %}
+
+                        </div>
+                        <div class="people-detail">
+                             <div class="name" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['profile_name'] }}</div>
+                             <div class="designation" style="color:{{ whatsapp_setting.frontcolor }}">{{ whatsapp_setting['title'] }}</div>
+                             <div class="status"><span style="color:{{ whatsapp_setting.frontcolor }}">offline</span> <i class="fa fa-circle" aria-hidden="true" style="color:{{ whatsapp_setting.statuscolor }}"></i></div>
+                        </div>
+                   </div>
+                  {% endif %}
+                    {% endif %}
+                 {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+$(document).ready(function(){
+  $('.closebtn').hide();
+  $(".whatsapp-btn").on("click",function(){
+    if($(".whatsapp-detail-box").hasClass("active")){
+      $(".whatsapp-detail-box").removeClass("active");
+      $(".whatsapp-btn").removeClass("active");
+      $('.whatsapp-detail-box').removeClass('hide');
+      $('.closebtn').hide();
+      $('.whatsapp-btn .fa-whatsapp').show();
+    }else{
+      $(".whatsapp-detail-box").addClass("active");
+      $(".whatsapp-btn").addClass("active");
+      $('.closebtn').show();
+      $('.whatsapp-btn .fa-whatsapp').hide();
+    }});
+
+});
+$('.whatsapp-box').on('click',function(){
+  if($('#whatsopenbox').hasClass('hide')){
+    $('#whatsopenbox').removeClass('hide');
+  }else{
+    $('#whatsopenbox').addClass('hide');
+  }
+});
+$('.title').on('click',function(){
+  $('#whatsopenbox').addClass('hide');
+});
+</script>
+<style>
+.whatsapp-box,.whatsapp-btn.boxsquare, .whatsapp-box.boxsquare,.diamond,.round{
+  background-color: {{ button_color }} !important;
+  background-image: {{ btngrident }} !important;
+}
+.diamond,.round{
+  background-image: {{ btngrident }} !important;
+}
+#whatsopenbox .title p,.whatsapp-detail-box .top-heading .start-heading,.whatsapp-detail-box .top-heading .intro{
+  color: {{ button_font_color }};
+}
+.whatsapp-detail-box .top-heading,#whatsopenbox .title{
+  background:{{ headercolor }};
+  background-image: {{ btngrident }} !important;
+}
+</style>

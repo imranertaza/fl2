@@ -1,0 +1,572 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_whatsapp }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+
+            <li><a href="#tab-data" data-toggle="tab">{{ tab_department }}</a></li>
+            <li><a href="#tab-gallery" data-toggle="tab">{{ tab_design }}</a></li>
+
+          </ul>
+          <div class="tab-content">
+             <!-- whatsappchat code start-->
+            <div class="tab-pane active" id="tab-general">
+                   <div class="col-sm-12">
+                        <ul class="nav nav-tabs" id="language">
+                        {% for language in languages %}
+                <li><a href="#language{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                {% endfor %}
+                      </ul>
+                         <div class="tab-content">
+                                {% for language in languages %}
+                           <div class="tab-pane active" id="language{{ language.language_id }}">
+                              <div class="form-group">
+                             <label class="col-sm-2 control-label" for="input-button_label"><span data-toggle="tooltip" title="Whatsapp Heading">{{ entry_heading }}</span></label>
+                               <div class="col-sm-5 ">
+                            <input type="text" name="module_tmdwhatsapp_description[{{ language.language_id }}][heading]" value="{{ module_tmdwhatsapp_description[language.language_id] ? module_tmdwhatsapp_description[language.language_id].heading }}" placeholder="{{ entry_heading }}" id="input-name{{ language.language_id }}" class="form-control" />
+                              {% if error_name[language.language_id] %}
+                      <div class="text-danger">{{ error_name[language.language_id] }}</div>
+                      {% endif %}
+                             </div>
+                            </div>
+
+                          <div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-description{{ language.language_id }}">{{ entry_description }}</label>
+                              <div class="col-sm-5">
+                                <textarea name="module_tmdwhatsapp_description[{{ language.language_id }}][description]" placeholder="" rows="5" id="input-description{{ language.language_id }}" class="form-control">{{ module_tmdwhatsapp_description[language.language_id] ? module_tmdwhatsapp_description[language.language_id].description }}</textarea>
+                          </div>
+                        </div>
+                          </div>
+                             {% endfor %}
+                        </div>
+                        <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-module_tmdwhatsapp_status">{{ entry_status }}</label>
+                <div class="col-sm-5">
+                        <select name="module_tmdwhatsapp_status" id="input-module_tmdwhatsapp_status" class="form-control">
+                    {% if module_tmdwhatsapp_status %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+                  </select>
+                </div>
+              </div>
+                    </div>
+                </div>
+
+              <!-- whatsappchat code end-->
+
+              <!--  Start -->
+<div class="tab-pane" id="tab-data">
+  <div class="row">
+    <div class="col-sm-2">
+      <ul class="nav nav-pills nav-stacked" id="formfield">
+        {% set form_row = 0 %}
+        <!-- whatsappchat code start-->
+            {% if (module_tmdwhatsapp_setting) %}
+        {% for option_fields in module_tmdwhatsapp_setting %}
+          <li>
+      <a href="#tab-data{{ form_row }}" data-toggle="tab"><i class="fa fa-minus-circle delete"  onclick="$('#formfield a:first').tab('show'); $('#formfield a[href=\'#tab-data{{ form_row }}\']').parent().remove(); $('#tab-data{{ form_row }}').remove();"></i> {% if (option_fields['tmdwhatsapp_setting_description'][1]['title'] is not empty) %}{{ option_fields['tmdwhatsapp_setting_description'][1]['title'] }}
+          {% else %}
+          {{ tab_department }}
+          {{ form_row }}
+ {% endif %}
+          </a>
+
+      </li>
+          {% set form_row = form_row + 1 %}
+        {% endfor %}
+        {% endif %}
+          <!-- whatsappchat code end-->
+          <li id="formfield-add"><a onclick="addFormfield();" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ tab_department }}</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-10">
+            <div class="tab-content one">
+        {% set form_row = 0 %}
+          {% if module_tmdwhatsapp_setting %}
+           {% for option_fields in module_tmdwhatsapp_setting %}
+
+        <div class="tab-pane active" id="tab-data{{ form_row }}">
+
+          <ul class="nav nav-tabs " id="fieldslanguage{{ form_row }}">
+            {% for language in languages %}
+                <li><a href="#fieldslanguage{{ form_row }}{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                {% endfor %}
+          </ul>
+          <div class="tab-content">
+
+             {% for language in languages %}
+              <div class="tab-pane" id="fieldslanguage{{ form_row }}{{ language.language_id }}">
+
+                <div class="form-group">
+                  <label class="control-label col-sm-2" for="input-title{{ form_row }}">{{ entry_title }}</label>
+                  <div class="col-sm-5">
+                  <input type="text" name="module_tmdwhatsapp_setting[{{ form_row }}][tmdwhatsapp_setting_description][{{ language.language_id }}][title]" value="{{ option_fields.tmdwhatsapp_setting_description[language.language_id] ? option_fields.tmdwhatsapp_setting_description[language.language_id].title }}" placeholder="{{ entry_title }}" id="input-title{{ form_row }}" class="form-control" />
+                  </div>
+                </div>
+
+                 <div class="form-group">
+                  <label class="control-label col-sm-2" for="input-field_name{{ form_row }}">{{ entry_profilename }}</label>
+                  <div class="col-sm-5">
+                  <input type="text" name="module_tmdwhatsapp_setting[{{ form_row }}][tmdwhatsapp_setting_description][{{ language.language_id }}][profile_name]" value="{{ option_fields.tmdwhatsapp_setting_description[language.language_id] ? option_fields.tmdwhatsapp_setting_description[language.language_id].profile_name }}" placeholder="{{ entry_profilename }}" id="input-title{{ form_row }}" class="form-control" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2" for="input-field_name{{ form_row }}">{{ entry_message }}</label>
+                  <div class="col-sm-5">
+                    <textarea name="module_tmdwhatsapp_setting[{{ form_row }}][tmdwhatsapp_setting_description][{{ language.language_id }}][greeting_message]" class="form-control" rows="5" >{{ option_fields.tmdwhatsapp_setting_description[language.language_id] ? option_fields.tmdwhatsapp_setting_description[language.language_id].greeting_message }}</textarea>
+
+                  </div>
+                </div>
+              </div>
+                {% endfor %}
+
+                  <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-number{{ form_row }}">{{ entry_number }}</label>
+                        <div class="col-sm-5">
+                          <input type="text" name="module_tmdwhatsapp_setting[{{ form_row }}][number]" value="{{ option_fields.number }}" placeholder="{{ entry_number }}" id="input-number{{ form_row }}" class="form-control" />
+                        </div>
+                  </div>
+
+                  <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-number{{ form_row }}">{{ entry_whatsappimage }}</label>
+                        <div class="col-sm-3">
+                         <a href="" id="thumb{{ form_row }}" data-toggle="image" class="img-thumbnail"><img src="{{ option_fields.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="module_tmdwhatsapp_setting[{{ form_row }}][image]" value="{{ option_fields.image }}" id="input-image{{ form_row }}" />
+                        </div>
+                  </div>
+
+                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-number{{ form_row }}">{{ entry_status2 }}</label>
+                        <div class="col-sm-5">
+                        <select name="module_tmdwhatsapp_setting[{{ form_row }}][status]" class="form-control">
+
+                          {% for profile_status in profilestatus %}
+                          {% if profile_status.value == option_fields.status %}
+                          <option value="{{ profile_status.value }}" selected>{{ profile_status.name }}</option>
+                          {% else %}
+                          <option value="{{ profile_status.value }}">{{ profile_status.name }}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-statuscolor{{ form_row }}">{{ entry_statuscolor }}</label>
+                    <div class="col-sm-6">
+                      <input type="text" name="module_tmdwhatsapp_setting[{{ form_row }}][statuscolor]" value="{{ option_fields.statuscolor }}" placeholder="{{ entry_statuscolor }}" id="input-statuscolor{{ form_row }}" class="form-control color" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ entry_frontcolor }}</label>
+                    <div class="col-sm-6">
+                      <input type="text" name="module_tmdwhatsapp_setting[{{ form_row }}][frontcolor]" value="{{ option_fields.frontcolor }}" placeholder="{{ entry_frontcolor }}" id="input-frontcolor{{ form_row }}" class="form-control color" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ entry_bgcolor }}</label>
+                    <div class="col-sm-6">
+                      <input type="text" name="module_tmdwhatsapp_setting[{{ form_row }}][bgcolor]" value="{{ option_fields.bgcolor }}" placeholder="{{ entry_bgcolor }}" id="input-frontcolor{{ form_row }}" class="form-control color" />
+                    </div>
+                  </div>
+
+               </div>
+           </div>
+        {% set form_row = form_row + 1 %}
+        {% endfor %}
+       {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<!--  End -->
+
+            <div class="tab-pane" id="tab-gallery">
+
+              <div class="form-group">
+    						<label class="col-sm-2 control-label">{{ entry_image }}</label>
+    						<div class="col-sm-3"><a href="" id="thumb-defaultimage" data-toggle="image" class="img-thumbnail"><img src="{{ module_tmdwhatsapp_pic }}" alt="" title="" data-placeholder="{{ placeholder }}"></a>
+    						  <input type="hidden" name="module_tmdwhatsapp_image" value="{{ module_tmdwhatsapp_image }}" id="input-defaultimage" />
+    						</div>
+
+    						<div class="col-sm-7">
+    							<div class="row">
+    								<div class="col-sm-6 paddleft">
+    									<label class="control-label">{{ entry_width }}</label>
+    									<br/>
+    									<input name="module_tmdwhatsapp_width" value="{{ module_tmdwhatsapp_width }}" placeholder="Width" id="input-width" class="form-control" type="text">
+    								</div>
+    								<div class="col-sm-6 paddleft">
+    									<label class="control-label">{{ entry_height }}</label>
+    									<br/>
+    									<input name="module_tmdwhatsapp_height" value="{{ module_tmdwhatsapp_height }}" placeholder="height" id="input-height" class="form-control" type="text">
+    								</div>
+    							</div>
+
+    						</div>
+    					</div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-theme-choose">{{ entry_choose }}</label>
+                <div class="col-sm-10">
+                  <select name="module_tmdwhatsapp_themechoose" id="input-theme-choose" class="form-control">
+                    <option value="layout1" {% if module_tmdwhatsapp_themechoose == 'layout1' %} selected="selected" {% endif %}>{{ text_layout1 }}</option>
+                    <option value="layout2" {% if module_tmdwhatsapp_themechoose == 'layout2' %} selected="selected" {% endif %}>{{ text_layout2 }}</option>
+                    <option value="layout3" {% if module_tmdwhatsapp_themechoose == 'layout3' %} selected="selected" {% endif %}>{{ text_layout3 }}</option>
+                 </select>
+                </div>
+             </div>
+             <div id="layout1" class="colors">
+               <div class="col-sm-offset-2 col-sm-10 col-xs-12">
+                 <div class="row">
+                 <img src="view/image/whats/w1.png" alt="layouts" title="layouts" class="img-responsive"/>
+                </div>
+               </div>
+             </div>
+             <div id="layout2" class="colors">
+               <div class="col-sm-offset-2 col-sm-10 col-xs-12">
+                 <div class="row">
+                 <img src="view/image/whats/w2.png" alt="layouts" title="layouts" class="img-responsive"/>
+                </div>
+               </div>
+             </div>
+             <div id="layout3" class="colors">
+               <div class="col-sm-offset-2 col-sm-10 col-xs-12">
+                 <div class="row">
+                 <img src="view/image/whats/w3.png" alt="layouts" title="layouts" class="img-responsive"/>
+                </div>
+               </div>
+             </div>
+               <div class="form-group hide">
+                   <label class="col-sm-2 control-label" for="input-top-status">{{ entry_position }}</label>
+                   <div class="col-sm-10 btn-group" data-toggle="buttons">
+                      {% if module_tmdwhatsapp_position %}
+                        <label class="btn btn-primary btn-sm active">
+                        <input type="radio" name="module_tmdwhatsapp_position" value="1" checked="checked"> {{ text_left }}
+                        </label>
+                         {% else %}
+                        <label class="btn btn-primary btn-sm">
+                          <input type="radio" name="module_tmdwhatsapp_position" value="1">  {{ text_left }}
+                        </label>
+                        {% endif %}
+                        {% if not module_tmdwhatsapp_position %}
+                        <label class="btn btn-primary btn-sm active">
+                          <input type="radio" name="module_tmdwhatsapp_position" value="0" checked="checked"> {{ text_right }}
+                        </label>
+                        {% else %}
+                        <label class="btn btn-primary btn-sm">
+                          <input type="radio" name="module_tmdwhatsapp_position" value="0"> {{ text_right }}
+                        </label>
+                         {% endif %}
+                    </div>
+                  </div>
+<!--whatsappchat code start (replace code)-->
+                  <div class="form-group">
+                   <label class="col-sm-2 control-label" for="input-top-status">{{ entry_layout }}</label>
+                   <div class="col-sm-10 btn-group" data-toggle="buttons">
+                     {% if module_tmdwhatsapp_button_layout==1 %}
+                        <label class="btn btn-primary btn-sm active">
+                        <input type="radio" name="module_tmdwhatsapp_button_layout" value="1" checked="checked">  {{ text_square }}
+                        </label>
+                         {% else %}
+                        <label class="btn btn-primary btn-sm">
+                          <input type="radio" name="module_tmdwhatsapp_button_layout" value="1">  {{ text_square }}
+                        </label>
+                        {% endif %}
+                        {% if module_tmdwhatsapp_button_layout==2 %}
+                           <label class="btn btn-primary btn-sm active">
+                           <input type="radio" name="module_tmdwhatsapp_button_layout" value="2" checked="checked">  {{ text_trangle }}
+                           </label>
+                            {% else %}
+                           <label class="btn btn-primary btn-sm">
+                             <input type="radio" name="module_tmdwhatsapp_button_layout" value="2">  {{ text_trangle }}
+                           </label>
+                           {% endif %}
+                        {% if module_tmdwhatsapp_button_layout==0 %}
+                        <label class="btn btn-primary btn-sm active">
+                          <input type="radio" name="module_tmdwhatsapp_button_layout" value="0" checked="checked"> {{ text_round }}
+                        </label>
+                        {% else %}
+                        <label class="btn btn-primary btn-sm">
+                          <input type="radio" name="module_tmdwhatsapp_button_layout" value="0"> {{ text_round }}
+                        </label>
+                         {% endif %}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ entry_profilewidth }}</label>
+    								<div class="col-sm-10">
+      								<div class="row">
+      								<div class="col-sm-6">
+      									<input name="module_tmdwhatsapp_pwidth" value="{{ module_tmdwhatsapp_pwidth }}" placeholder="{{ entry_width }}" id="input-width" class="form-control" type="text">
+      								</div>
+      								<div class="col-sm-6">
+      									<input name="module_tmdwhatsapp_pheight" value="{{ module_tmdwhatsapp_pheight }}" placeholder="{{ entry_height }}" id="input-height" class="form-control" type="text">
+      								</div>
+      								</div>
+    								</div>
+    							</div>
+
+          <div class="form-group">
+            <div class="col-sm-12">
+              <label class="col-sm-2 control-label">{{ entry_btncolor }}</label>
+              <div class="col-sm-5">
+                <input type="text" name="module_tmdwhatsapp_button_color" value="{{ module_tmdwhatsapp_button_color }}"  class="form-control color"  />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12">
+              <label class="col-sm-2 control-label">{{ entry_btnfontcolor }}</label>
+              <div class="col-sm-5">
+                <input type="text" name="module_tmdwhatsapp_button_frontcolor" value="{{ module_tmdwhatsapp_button_frontcolor }}"  class="form-control color"  />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12">
+              <label class="col-sm-2 control-label">{{ entry_headercolor }}</label>
+              <div class="col-sm-5">
+                <input type="text" name="module_tmdwhatsapp_headercolor" value="{{ module_tmdwhatsapp_headercolor }}"  class="form-control color"  />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-12">
+              <label class="col-sm-2 control-label">{{ entry_btngredient }}</label>
+              <div class="col-sm-5">
+                <textarea name="module_tmdwhatsapp_btngredient" class="form-control" rows="5" >{{ module_tmdwhatsapp_btngredient }}</textarea>
+              </div>
+            </div>
+          </div>
+
+    <!--whatsappchat code end-->
+
+       </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+ <script type="text/javascript"><!--
+
+var form_row = {{ form_row }};
+
+function addFormfield() {
+  html  = ' <div class="tab-pane active" id="tab-data' + form_row + '">';
+
+  html += ' <ul class="nav nav-tabs fieldslanguage" id="fieldslanguage' + form_row + '">';
+  {% for language in languages %}
+  html += ' <li><a href="#fieldslanguage' + form_row + '{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>';
+ {% endfor %}
+  html += ' </ul>';
+  html += '<div class="tab-content">';
+  {% for language in languages %}
+  html += '<div class="tab-pane" id="fieldslanguage' + form_row + '{{ language.language_id }}">';
+  html += ' <div class="form-group">';
+  html += '   <label class="control-label col-sm-2" for="input-error_message{{ language.language_id }}' + form_row + '">{{ entry_title }}</label> <div class="col-sm-5">';  html += '    <input type="text" name="module_tmdwhatsapp_setting[' + form_row + '][tmdwhatsapp_setting_description][{{ language.language_id }}][title]" value="" id="input-error_message{{ language.language_id }}' + form_row + '" placeholder="{{ entry_title }}" class="form-control"></div>';
+    html += ' </div>';
+
+
+    html += ' <div class="form-group">';
+  html += '   <label class="control-label col-sm-2" for="input-error_message{{ language.language_id }}' + form_row + '"> {{ entry_profilename }}</label> <div class="col-sm-5">';
+  html += '    <input type="text" name="module_tmdwhatsapp_setting[' + form_row + '][tmdwhatsapp_setting_description][{{ language.language_id }}][profile_name]" value="" id="input-error_message{{ language.language_id }}' + form_row + '" placeholder="{{ entry_profilename }}" class="form-control"></div>';
+    html += ' </div>';
+   html += ' <div class="form-group">';
+  html += '   <label class="control-label col-sm-2" for="input-error_message{{ language.language_id }}' + form_row + '"> {{ entry_message }} </label> <div class="col-sm-5">';
+  html += '<textarea name="module_tmdwhatsapp_setting[' + form_row + '][tmdwhatsapp_setting_description][{{ language.language_id }}][greeting_message]" id="" class="form-control" rows="5" ></textarea> </div>';
+    html += '</div></div>';
+
+{% endfor %}
+
+  html += '  <div class="form-group required">';
+  html += '    <label class="col-sm-2 control-label" for="input-firstname' + form_row + '">{{ entry_number }}</label>';
+  html += '    <div class="col-sm-5"><input type="text" name="module_tmdwhatsapp_setting[' + form_row + '][number]" value="" placeholder="{{ entry_number }}" id="input-firstname' + form_row + '" class="form-control" /></div>';
+  html += '  </div>';
+
+   html += '  <div class="form-group">';
+  html += '    <label class="col-sm-2 control-label" for="input-lastname' + form_row + '">{{ entry_whatsappimage }}</label>';
+
+  html += '    <div class="col-sm-5"><a href="" id="thumb-image' + form_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="module_tmdwhatsapp_setting[' + form_row + '][image]" value="" id="input-image' + form_row + '" /></div>';
+  html += '  </div>';
+
+   html += '  <div class="form-group">';
+  html += '    <label class="col-sm-2 control-label" for="input-lastname' + form_row + '">{{ entry_status2 }}</label>';
+    html += '  <div class="col-sm-5"><select name="module_tmdwhatsapp_setting[' + form_row + '][status]" class="form-control">';
+    {% for gallery_type in profilestatus %}
+    html += '    <option value="{{ gallery_type.value }}">{{ gallery_type.name }}</option>';
+    {% endfor %}
+    html += '  </select></div>';
+    html += '</div>';
+
+    html += '  <div class="form-group">';
+    html += '    <label class="col-sm-2 control-label" for="input-statuscolor' + form_row + '">{{ entry_statuscolor }}</label>';
+    html += '    <div class="col-sm-6"><input type="text" name="module_tmdwhatsapp_setting[' + form_row + '][statuscolor]" value="" placeholder="{{ entry_statuscolor }}" id="input-statuscolor' + form_row + '" class="form-control color' + form_row + '" /></div>';
+    html += '  </div>';
+
+    html += '  <div class="form-group">';
+    html += '    <label class="col-sm-2 control-label" for="input-frontcolor' + form_row + '">{{ entry_frontcolor }}</label>';
+    html += '    <div class="col-sm-6"><input type="text" name="module_tmdwhatsapp_setting[' + form_row + '][frontcolor]" value="" placeholder="{{ entry_frontcolor }}" id="input-frontcolorr' + form_row + '" class="form-control color' + form_row + '" /></div>';
+    html += '  </div>';
+
+     html += '  <div class="form-group">';
+    html += '    <label class="col-sm-2 control-label" for="input-bgcolor' + form_row + '">{{ entry_bgcolor }}</label>';
+    html += '    <div class="col-sm-6"><input type="text" name="module_tmdwhatsapp_setting[' + form_row + '][bgcolor]" value="" placeholder="{{ entry_bgcolor }}" id="input-bgcolorr' + form_row + '" class="form-control color' + form_row + '" /></div>';
+    html += '  </div>';
+
+    html += '</div>';
+
+  html += ' </div>';
+
+    $('#tab-data .one').append(html);
+    $('#fieldslanguage'+form_row+' a:first').tab('show');
+
+  $('#formfield-add').before('<li><a href="#tab-data' + form_row + '" data-toggle="tab"><i class="fa fa-minus-circle" onclick="$(\'#formfield a:first\').tab(\'show\'); $(\'a[href=\\\'#tab-data' + form_row + '\\\']\').parent().remove(); $(\'#tab-data' + form_row + '\').remove();"></i> {{ tab_department }} ' + form_row + '</a></li>');
+
+  $('#formfield a[href=\'#tab-data' + form_row + '\']').tab('show');
+
+  $('#tab-data' + form_row + ' .form-group[data-sort]').detach().each(function() {
+    if ($(this).attr('data-sort') >= 0 && $(this).attr('data-sort') <= $('#tab-data' + form_row + ' .form-group').length) {
+      $('#tab-data' + form_row + ' .form-group').eq($(this).attr('data-sort')).before(this);
+    }
+
+    if ($(this).attr('data-sort') > $('#tab-data' + form_row + ' .form-group').length) {
+      $('#tab-data' + form_row + ' .form-group:last').after(this);
+    }
+
+    if ($(this).attr('data-sort') < -$('#tab-data' + form_row + ' .form-group').length) {
+      $('#tab-data' + form_row + ' .form-group:first').before(this);
+    }
+  });
+
+  $(document).ready( function() {
+    $('.color'+form_row).each(function() {
+      $(this).minicolors({
+        control: $(this).attr('data-control') || 'hue',
+        defaultValue: $(this).attr('data-defaultValue') || '',
+        inline: $(this).attr('data-inline') === 'true',
+        letterCase: $(this).attr('data-letterCase') || 'lowercase',
+        opacity: $(this).attr('data-opacity'),
+        position: $(this).attr('data-position') || 'bottom left',
+        change: function(hex, opacity) {
+        if( !hex ) return;
+        if( opacity ) hex += ', ' + opacity;
+      try {
+        console.log(hex);
+    } catch(e) {}
+      },
+      theme: 'bootstrap'
+    });
+
+  });
+
+});
+
+  form_row++;
+
+}
+//--></script>
+
+<script type="text/javascript"><!--
+$('#language a:first').tab('show');
+$('.language a:first').tab('show');
+//--></script>
+
+
+
+<script type="text/javascript"><!--
+$('#fieldslanguage a:first').tab('show');
+$('.admin_language a:first').tab('show');
+//--></script>
+
+<script type="text/javascript">
+{% set form_row = 0 %}
+{% if module_tmdwhatsapp_setting %}
+{% for option_fields in module_tmdwhatsapp_setting %}
+
+$('#fieldslanguage{{ form_row }} a:first').tab('show');
+{% set form_row = form_row + 1 %}
+{% endfor %}
+{% endif %}
+</script>
+
+<script type="text/javascript"><!--
+$('#tab-data a:first').tab('show');
+//--></script>
+
+<script src="view/javascript/colorbox/jquery.minicolors.js"></script>
+<link rel="stylesheet" href="view/javascript/colorbox/jquery.minicolors.css">
+<script>
+    $(document).ready( function() {
+
+            $('.color').each(function() {
+                  $(this).minicolors({
+          control: $(this).attr('data-control') || 'hue',
+          defaultValue: $(this).attr('data-defaultValue') || '',
+          inline: $(this).attr('data-inline') === 'true',
+          letterCase: $(this).attr('data-letterCase') || 'lowercase',
+          opacity: $(this).attr('data-opacity'),
+          position: $(this).attr('data-position') || 'bottom left',
+          change: function(hex, opacity) {
+            if( !hex ) return;
+            if( opacity ) hex += ', ' + opacity;
+            try {
+              console.log(hex);
+            } catch(e) {}
+          },
+          theme: 'bootstrap'
+        });
+
+            });
+
+    });
+    $(function() {
+        $('#input-theme-choose').change(function(){
+            $('.colors').hide();
+            $('#' + $(this).val()).show();
+        });
+    $('#'+$('#input-theme-choose option:selected').val()).show();
+    });
+</script>
+<style>
+.nav > li > a:hover, .nav > li > a:focus {
+text-decoration: none;
+background-color: #1872a2;
+color: #fff;
+}
+.colors{display:none;}
+.colors img{margin-bottom:20px;}
+</style>
+</div>
+{{ footer }}
